@@ -1971,7 +1971,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         // Mouse moved
         case MotionNotify:
         {
-            pushEvent(Event::MouseMoved{{windowEvent.xmotion.x, windowEvent.xmotion.y}});
+            pushEvent(Event::MouseMoved{{{windowEvent.xmotion.x, windowEvent.xmotion.y}}});
             break;
         }
 
