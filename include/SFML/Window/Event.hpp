@@ -119,24 +119,31 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
+    /// \brief Mouse base event containing the position
+    ///
+    ////////////////////////////////////////////////////////////
+	struct MousePosition
+	{
+        Vector2i     position; //!< Position of the mouse pointer, relative to the top left of the owner window
+	};
+
+    ////////////////////////////////////////////////////////////
     /// \brief Mouse wheel scrolled event
     ///
     ////////////////////////////////////////////////////////////
-    struct MouseWheelScrolled
+    struct MouseWheelScrolled : MousePosition
     {
         Mouse::Wheel wheel{}; //!< Which wheel (for mice with multiple ones)
         float        delta{}; //!< Wheel offset (positive is up/left, negative is down/right). High-precision mice may use non-integral offsets.
-        Vector2i     position; //!< Position of the mouse pointer, relative to the top left of the owner window
     };
 
     ////////////////////////////////////////////////////////////
     /// \brief Mouse button changed events
     ///
     ////////////////////////////////////////////////////////////
-    struct MouseButtonChanged
+    struct MouseButtonChanged : MousePosition
     {
         Mouse::Button button{}; //!< Code of the button that has been pressed
-        Vector2i      position; //!< Position of the mouse pointer, relative to the top left of the owner window
     };
     struct MouseButtonPressed : MouseButtonChanged
     {
@@ -149,9 +156,8 @@ public:
     /// \brief Mouse move event
     ///
     ////////////////////////////////////////////////////////////
-    struct MouseMoved
+    struct MouseMoved : MousePosition
     {
-        Vector2i position; //!< Position of the mouse pointer, relative to the top left of the owner window
     };
 
     ////////////////////////////////////////////////////////////
@@ -299,7 +305,9 @@ private:
                  TextEntered,
                  KeyPressed,
                  KeyReleased,
+				 MousePosition,
                  MouseWheelScrolled,
+				 MouseButtonChanged,
                  MouseButtonPressed,
                  MouseButtonReleased,
                  MouseMoved,
