@@ -38,7 +38,11 @@
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-std::unique_ptr<MonitorImpl> MonitorImplCocoa::getPrimaryMonitor()
+MonitorImplCocoa::MonitorImplCocoa() = default;
+
+
+////////////////////////////////////////////////////////////
+std::unique_ptr<MonitorImpl> MonitorImplCocoa::createPrimaryMonitor()
 {
     return std::make_unique<MonitorImplCocoa>();
 }

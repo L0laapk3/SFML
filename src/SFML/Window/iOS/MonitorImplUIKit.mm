@@ -34,7 +34,11 @@
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-std::unique_ptr<MonitorImpl> MonitorImplUIKit::getPrimaryMonitor()
+MonitorImplUIKit::MonitorImplUIKit() = default;
+
+
+////////////////////////////////////////////////////////////
+std::unique_ptr<MonitorImpl> MonitorImplUIKit::createPrimaryMonitor()
 {
     return std::make_unique<MonitorImplUIKit>();
 }

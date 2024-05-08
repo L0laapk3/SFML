@@ -59,7 +59,7 @@ MonitorImplX11::MonitorImplX11(std::shared_ptr<Display>&& display, int screen) :
 
 
 ////////////////////////////////////////////////////////////
-std::unique_ptr<MonitorImpl> MonitorImplX11::getPrimaryMonitor()
+std::unique_ptr<MonitorImpl> MonitorImplX11::createPrimaryMonitor()
 {
     // Open a connection with the X server
     auto display = openDisplay();
