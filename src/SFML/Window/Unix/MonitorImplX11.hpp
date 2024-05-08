@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/MonitorImpl.hpp>
+#include <SFML/Window/Unix/Display.hpp>
 
 
 namespace sf
@@ -39,8 +40,6 @@ namespace priv
 ////////////////////////////////////////////////////////////
 /// \brief Linux (X11) implementation of MonitorImpl
 ///
-/// \note Placeholder class. Actual storage of the monitor handle not implemented yet.
-///
 ////////////////////////////////////////////////////////////
 class MonitorImplX11 : public MonitorImpl
 {
@@ -49,7 +48,7 @@ public:
     /// \brief Construct the monitor implementation
     ///
     ////////////////////////////////////////////////////////////
-    MonitorImplX11();
+    MonitorImplX11(std::shared_ptr<Display>&& display, int screen);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create primary monitor implementation
@@ -74,6 +73,13 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     VideoMode getDesktopMode();
+
+private:
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    const std::shared_ptr<Display> m_display;
+    const int m_screen;
 };
 
 } // namespace priv
