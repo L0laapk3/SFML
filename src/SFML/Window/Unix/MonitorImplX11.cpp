@@ -59,6 +59,23 @@ MonitorImplX11::MonitorImplX11(std::shared_ptr<Display>&& display, int screen) :
 
 
 ////////////////////////////////////////////////////////////
+std::unique_ptr<MonitorImpl> MonitorImplX11::getPrimaryMonitor()
+{
+    // Open a connection with the X server
+    auto display = openDisplay();
+    if (display)
+    {
+        // Retrieve the default screen number
+        return std::make_unique<MonitorImplX11>(std::move(display), DefaultScreen(display.get()));
+    }
+    else
+    {
+        // We couldn't connect to the X server
+        err() << "Failed to connect to the X server while trying to get the supported video modes" << std::endl;
+    }
+}
+
+////////////////////////////////////////////////////////////
 std::vector<VideoMode> MonitorImplX11::getFullscreenModes()
 {
     std::vector<VideoMode> modes;
