@@ -119,29 +119,36 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
+    /// \brief Mouse position event
+    ///
+    ////////////////////////////////////////////////////////////
+    struct MousePosition
+    {
+        Vector2i     position; //!< Position of the mouse pointer, relative to the top left of the owner window
+    };
+
+    ////////////////////////////////////////////////////////////
     /// \brief Mouse wheel scrolled event
     ///
     ////////////////////////////////////////////////////////////
-    struct MouseWheelScrolled
+    struct MouseWheelScrolled : public MousePosition
     {
         Mouse::Wheel wheel{}; //!< Which wheel (for mice with multiple ones)
         float        delta{}; //!< Wheel offset (positive is up/left, negative is down/right). High-precision mice may use non-integral offsets.
-        Vector2i     position; //!< Position of the mouse pointer, relative to the top left of the owner window
     };
 
     ////////////////////////////////////////////////////////////
     /// \brief Mouse button changed events
     ///
     ////////////////////////////////////////////////////////////
-    struct MouseButtonChanged
+    struct MouseButtonChanged : public MousePosition
     {
         Mouse::Button button{}; //!< Code of the button that has been pressed
-        Vector2i      position; //!< Position of the mouse pointer, relative to the top left of the owner window
     };
-    struct MouseButtonPressed : MouseButtonChanged
+    struct MouseButtonPressed : public MouseButtonChanged
     {
     };
-    struct MouseButtonReleased : MouseButtonChanged
+    struct MouseButtonReleased : public MouseButtonChanged
     {
     };
 
@@ -149,9 +156,8 @@ public:
     /// \brief Mouse move event
     ///
     ////////////////////////////////////////////////////////////
-    struct MouseMoved
+    struct MouseMoved : public MousePosition
     {
-        Vector2i position; //!< Position of the mouse pointer, relative to the top left of the owner window
     };
 
     ////////////////////////////////////////////////////////////

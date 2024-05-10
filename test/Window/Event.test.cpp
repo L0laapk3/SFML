@@ -1,3 +1,4 @@
+#include "SFML/System/Vector2.hpp"
 #include <SFML/Window/Event.hpp>
 
 #include <catch2/catch_test_macros.hpp>
@@ -91,7 +92,7 @@ TEST_CASE("[Window] sf::Event")
         CHECK(keyReleased.shift);
         CHECK(keyReleased.system);
 
-        event = sf::Event::MouseWheelScrolled{sf::Mouse::Wheel::Horizontal, 3.14f, {4, 5}};
+        event = sf::Event::MouseWheelScrolled{{{4, 5}}, sf::Mouse::Wheel::Horizontal, 3.14f};
         CHECK(event);
         CHECK(event.is<sf::Event::MouseWheelScrolled>());
         CHECK(event.getIf<sf::Event::MouseWheelScrolled>());
@@ -100,7 +101,7 @@ TEST_CASE("[Window] sf::Event")
         CHECK(mouseWheelScrolled.delta == 3.14f);
         CHECK(mouseWheelScrolled.position == sf::Vector2i(4, 5));
 
-        event = sf::Event::MouseButtonPressed{sf::Mouse::Button::Middle, {6, 7}};
+        event = sf::Event::MouseButtonPressed{{{{6, 7}}, sf::Mouse::Button::Middle}};
         CHECK(event);
         CHECK(event.is<sf::Event::MouseButtonPressed>());
         CHECK(event.getIf<sf::Event::MouseButtonPressed>());
@@ -108,7 +109,7 @@ TEST_CASE("[Window] sf::Event")
         CHECK(mouseButtonPressed.button == sf::Mouse::Button::Middle);
         CHECK(mouseButtonPressed.position == sf::Vector2i(6, 7));
 
-        event = sf::Event::MouseButtonReleased{sf::Mouse::Button::Extra1, {8, 9}};
+        event = sf::Event::MouseButtonReleased{{{{8, 9}}, sf::Mouse::Button::Extra1}};
         CHECK(event);
         CHECK(event.is<sf::Event::MouseButtonReleased>());
         CHECK(event.getIf<sf::Event::MouseButtonReleased>());
@@ -116,7 +117,7 @@ TEST_CASE("[Window] sf::Event")
         CHECK(mouseButtonReleased.button == sf::Mouse::Button::Extra1);
         CHECK(mouseButtonReleased.position == sf::Vector2i(8, 9));
 
-        event = sf::Event::MouseMoved{{4, 2}};
+        event = sf::Event::MouseMoved{{{4, 2}}};
         CHECK(event);
         CHECK(event.is<sf::Event::MouseMoved>());
         CHECK(event.getIf<sf::Event::MouseMoved>());
