@@ -29,6 +29,9 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/MonitorImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/Unix/Utils.hpp>
+
+#include <X11/extensions/Xrandr.h>
 
 
 namespace sf
@@ -37,6 +40,14 @@ class VideoMode;
 
 namespace priv
 {
+
+////////////////////////////////////////////////////////////
+template <>
+struct XDeleter<XRRScreenConfiguration>
+{
+    void operator()(XRRScreenConfiguration* config) const;
+};
+
 ////////////////////////////////////////////////////////////
 /// \brief Linux (X11) implementation of MonitorImpl
 ///
@@ -48,7 +59,7 @@ public:
     /// \brief Construct the monitor implementation
     ///
     ////////////////////////////////////////////////////////////
-    MonitorImplX11(std::shared_ptr<Display>&& display, int screen);
+    MonitorImplX11(std::shared_ptr<Display>&& display, int screen, X11Ptr<XRRScreenConfiguration>&& config);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create primary monitor implementation
@@ -80,6 +91,7 @@ private:
     ////////////////////////////////////////////////////////////
     const std::shared_ptr<Display> m_display;
     const int m_screen;
+	const X11Ptr<XRRScreenConfiguration> m_config;
 };
 
 } // namespace priv
