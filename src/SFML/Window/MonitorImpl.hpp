@@ -34,6 +34,7 @@
 namespace sf
 {
 class VideoMode;
+class VideoModeDesktop;
 
 namespace priv
 {
@@ -66,7 +67,7 @@ public:
     /// \return Current desktop video mode of this monitor
     ///
     ////////////////////////////////////////////////////////////
-    VideoMode getDesktopMode() = delete;
+    VideoModeDesktop getDesktopMode() = delete;
 };
 
 } // namespace priv

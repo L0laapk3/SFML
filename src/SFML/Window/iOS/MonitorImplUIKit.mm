@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/VideoModeDesktop.hpp>
 #include <SFML/Window/iOS/MonitorImplUIKit.hpp>
 #include <SFML/Window/iOS/SFAppDelegate.hpp>
 
@@ -55,12 +55,11 @@ std::vector<VideoMode> MonitorImplUIKit::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
-VideoMode MonitorImplUIKit::getDesktopMode()
+VideoModeDesktop MonitorImplUIKit::getDesktopMode()
 {
     const CGRect bounds       = [[UIScreen mainScreen] bounds];
     const double backingScale = [SFAppDelegate getInstance].backingScaleFactor;
-    return VideoMode({static_cast<unsigned int>(bounds.size.width * backingScale),
-                      static_cast<unsigned int>(bounds.size.height * backingScale)});
+    return {{ bounds.size.width * backingScale, bounds.size.height * backingScale }, Vector2i() };
 }
 
 } // namespace sf::priv

@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 
 #include <SFML/Window/Monitor.hpp>
+#include <SFML/Window/VideoModeDesktop.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/GlxContext.hpp>
 #include <SFML/Window/Unix/Utils.hpp>

@@ -28,6 +28,7 @@
 
 #include <SFML/Window/InputImpl.hpp>
 #include <SFML/Window/Monitor.hpp>
+#include <SFML/Window/VideoModeDesktop.hpp>
 #include <SFML/Window/Unix/ClipboardImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/KeyboardImpl.hpp>
@@ -478,8 +479,8 @@ m_cursorGrabbed(m_fullscreen)
         windowPosition = displaySize - Vector2i(mode.size) / 2;
     }
 
-    const unsigned int width  = mode.size.x;
-    const unsigned int height = mode.size.y;
+    const auto width  = static_cast<unsigned int>(mode.size.x);
+    const auto height = static_cast<unsigned int>(mode.size.y);
 
     Visual* visual = nullptr;
     int     depth  = 0;
@@ -604,8 +605,8 @@ m_cursorGrabbed(m_fullscreen)
     {
         m_useSizeHints = true;
         XSizeHints sizeHints{};
-        sizeHints.flags     = PMinSize | PMaxSize | USPosition;
-        sizeHints.min_width = sizeHints.max_width = static_cast<int>(width);
+        sizeHints.flags      = PMinSize | PMaxSize | USPosition;
+        sizeHints.min_width  = sizeHints.max_width  = static_cast<int>(width);
         sizeHints.min_height = sizeHints.max_height = static_cast<int>(height);
         sizeHints.x                                 = windowPosition.x;
         sizeHints.y                                 = windowPosition.y;
@@ -1323,7 +1324,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
             std::swap(res->modes[i].height, res->modes[i].width);
 
         // Check if screen size match
-        if ((res->modes[i].width == mode.size.x) && (res->modes[i].height == mode.size.y))
+        if ((static_cast<int>(res->modes[i].width) == mode.size.x) && (static_cast<int>(res->modes[i].height) == mode.size.y))
         {
             xRandMode = res->modes[i].id;
             modeFound = true;

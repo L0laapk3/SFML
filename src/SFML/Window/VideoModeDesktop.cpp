@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2013 Jonathan De Wachter (dewachter.jonathan@gmail.com)
+// Copyright (C) 2007-2024 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,46 +25,23 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Android/MonitorImplAndroid.hpp>
 #include <SFML/Window/VideoModeDesktop.hpp>
 
-#include <SFML/System/Android/Activity.hpp>
-#include <SFML/System/Sleep.hpp>
-#include <SFML/System/Vector2.hpp>
 
-#include <mutex>
-
-namespace sf::priv
+namespace sf
 {
 ////////////////////////////////////////////////////////////
-MonitorImplAndroid::MonitorImplAndroid() = default;
-
-
-////////////////////////////////////////////////////////////
-std::unique_ptr<MonitorImpl> MonitorImplAndroid::createPrimaryMonitor()
+VideoModeDesktop::VideoModeDesktop(const VideoMode& mode, const Vector2i& position) :
+	VideoMode(mode),
+	position(position)
 {
-    return std::make_unique<MonitorImplAndroid>();
 }
 
 
 ////////////////////////////////////////////////////////////
-std::vector<VideoMode> MonitorImplAndroid::getFullscreenModes()
+VideoModeDesktop::VideoModeDesktop(const Rect<int>& sizePosition, unsigned int modeBitsPerPixel) :
+	VideoModeDesktop(VideoMode(sizePosition.getSize(), modeBitsPerPixel), sizePosition.getPosition())
 {
-    const VideoMode desktop = getDesktopMode();
-
-    // Return both portrait and landscape resolutions
-    return {desktop, VideoMode(Vector2u(desktop.size.y, desktop.size.x), desktop.bitsPerPixel)};
 }
 
-
-////////////////////////////////////////////////////////////
-VideoModeDesktop MonitorImplAndroid::getDesktopMode()
-{
-    // Get the activity states
-    priv::ActivityStates& states = priv::getActivity();
-    const std::lock_guard lock(states.mutex);
-
-    return { VideoMode(Vector2u(states.screenSize)), sf::vector2i() };
-}
-
-} // namespace sf::priv
+} // namespace sf

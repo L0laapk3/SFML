@@ -38,6 +38,7 @@
 namespace sf
 {
 class VideoMode;
+class VideoModeDesktop;
 
 namespace priv
 {
@@ -89,7 +90,7 @@ public:
     /// \return Current desktop video mode of this monitor
     ///
     ////////////////////////////////////////////////////////////
-    VideoMode getDesktopMode();
+    VideoModeDesktop getDesktopMode();
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the video mode is valid on this monitor

@@ -25,9 +25,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include "SFML/System/Vector2.hpp"
 #include <SFML/Window/DRM/DRMContext.hpp>
 #include <SFML/Window/DRM/MonitorImplDRM.hpp>
-#include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/VideoModeDesktop.hpp>
 
 #include <SFML/System/Err.hpp>
 
@@ -66,14 +67,14 @@ std::vector<VideoMode> MonitorImplDRM::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
-VideoMode MonitorImplDRM::getDesktopMode()
+VideoModeDesktop MonitorImplDRM::getDesktopMode()
 {
     const Drm&         drm = DRMContext::getDRM();
     drmModeModeInfoPtr ptr = drm.mode;
     if (ptr)
-        return VideoMode({ptr->hdisplay, ptr->vdisplay});
+        return VideoModeDesktop({ptr->hdisplay, ptr->vdisplay}, sf::Vector2i());
     else
-        return VideoMode({0, 0});
+        return VideoModeDesktop({0, 0}, sf::Vector2i());
 }
 
 } // namespace sf::priv

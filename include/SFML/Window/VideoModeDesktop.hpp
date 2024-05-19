@@ -27,56 +27,51 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/MonitorImpl.hpp>
+#include "SFML/Graphics/Rect.hpp"
+#include <SFML/Window/Export.hpp>
+#include <SFML/Window/VideoMode.hpp>
 
 
 namespace sf
 {
-class VideoMode;
-class VideoModeDesktop;
-
-namespace priv
-{
 ////////////////////////////////////////////////////////////
-/// \brief Windows implementation of MonitorImpl
-///
-/// \note Placeholder class. Actual storage of the monitor handle not implemented yet.
+/// \brief VideoMode defines a video mode (width, height, bpp)
 ///
 ////////////////////////////////////////////////////////////
-class MonitorImplWin32 : public MonitorImpl
+class SFML_WINDOW_API VideoModeDesktop : public VideoMode
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the monitor implementation
+    /// \brief Default constructor
+    ///
+    /// This constructors initializes all members to 0.
     ///
     ////////////////////////////////////////////////////////////
-    MonitorImplWin32();
+    VideoModeDesktop() = default;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create primary monitor implementation
+    /// \brief Construct the video mode with its attributes
     ///
-    /// \return Pointer to the created primary monitor implementation
+    /// \param VideoMode Video mode attributes
+    /// \param position  Monitor location in pixels
     ///
     ////////////////////////////////////////////////////////////
-    static std::unique_ptr<MonitorImpl> createPrimaryMonitor();
+    explicit VideoModeDesktop(const VideoMode& mode, const Vector2i& position);
+
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the list of all the supported fullscreen video modes of this monitor
+    /// \brief Construct the video mode with its attributes
     ///
-    /// \return Array filled with the fullscreen video modes of this monitor
+    /// \param sizePosition     Width height, and location in pixels
+    /// \param modeBitsPerPixel Pixel depths in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    std::vector<VideoMode> getFullscreenModes();
+    explicit VideoModeDesktop(const Rect<int>& sizePosition, unsigned int modeBitsPerPixel = 32);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the current desktop video mode of this monitor
-    ///
-    /// \return Current desktop video mode of this monitor
-    ///
+    // Member data
     ////////////////////////////////////////////////////////////
-    VideoModeDesktop getDesktopMode();
+    Vector2i position; //!< Monitor location in pixels
 };
-
-} // namespace priv
 
 } // namespace sf

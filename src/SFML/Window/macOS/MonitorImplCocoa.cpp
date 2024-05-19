@@ -26,7 +26,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/VideoModeDesktop.hpp>
 #include <SFML/Window/macOS/MonitorImplCocoa.hpp>
 #include <SFML/Window/macOS/cg_sf_conversion.hpp>
 
@@ -89,7 +89,7 @@ std::vector<VideoMode> MonitorImplCocoa::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
-VideoMode MonitorImplCocoa::getDesktopMode()
+VideoModeDesktop MonitorImplCocoa::getDesktopMode()
 {
     VideoMode mode; // RVO
 
@@ -103,7 +103,7 @@ VideoMode MonitorImplCocoa::getDesktopMode()
 
     CGDisplayModeRelease(cgmode);
 
-    return mode;
+    return {mode, sf::Vector2i{0, 0}};
 }
 
 } // namespace sf::priv

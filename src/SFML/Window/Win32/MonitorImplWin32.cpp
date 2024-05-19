@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/VideoModeDesktop.hpp>
 #include <SFML/Window/Win32/MonitorImplWin32.hpp>
 
 #include <SFML/System/Win32/WindowsHeader.hpp>
@@ -70,7 +70,7 @@ std::vector<VideoMode> MonitorImplWin32::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
-VideoMode MonitorImplWin32::getDesktopMode()
+VideoModeDesktop MonitorImplWin32::getDesktopMode()
 {
     DEVMODE win32Mode;
     win32Mode.dmSize        = sizeof(win32Mode);

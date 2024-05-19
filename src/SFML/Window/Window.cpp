@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlContext.hpp>
 #include <SFML/Window/Monitor.hpp>
+#include <SFML/Window/VideoModeDesktop.hpp>
 #include <SFML/Window/Window.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 

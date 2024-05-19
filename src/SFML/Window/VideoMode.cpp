@@ -32,7 +32,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-VideoMode::VideoMode(const Vector2u& modeSize, unsigned int modeBitsPerPixel) :
+VideoMode::VideoMode(const Vector2i& modeSize, unsigned int modeBitsPerPixel) :
 size(modeSize),
 bitsPerPixel(modeBitsPerPixel)
 {

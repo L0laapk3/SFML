@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Monitor.hpp>
 #include <SFML/Window/MonitorImpl.hpp>
-#include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/VideoModeDesktop.hpp>
 
 #include <algorithm>
 #include <functional>
@@ -94,7 +94,7 @@ Monitor Monitor::getPrimaryMonitor()
 
 
 ////////////////////////////////////////////////////////////
-VideoMode Monitor::getDesktopMode()
+VideoModeDesktop Monitor::getDesktopMode()
 {
     // Directly forward to the OS-specific implementation
     return static_cast<MonitorImplType*>(m_impl.get())->getDesktopMode();

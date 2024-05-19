@@ -25,10 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include "SFML/System/Vector2.hpp"
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/MonitorImplX11.hpp>
 #include <SFML/Window/Unix/Utils.hpp>
-#include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/VideoModeDesktop.hpp>
 
 #include <SFML/System/Err.hpp>
 
@@ -41,7 +42,9 @@
 
 namespace sf::priv
 {
+
 ////////////////////////////////////////////////////////////
+template <>
 void XDeleter<XRRScreenConfiguration>::operator()(XRRScreenConfiguration* config) const
 {
     void operator()(XRRScreenConfiguration* config) const
@@ -49,17 +52,6 @@ void XDeleter<XRRScreenConfiguration>::operator()(XRRScreenConfiguration* config
         XRRFreeScreenConfigInfo(config);
     }
 };
-
-
-////////////////////////////////////////////////////////////
-MonitorImplX11::MonitorImplX11() = default;
-
-
-////////////////////////////////////////////////////////////
-std::unique_ptr<MonitorImpl> MonitorImplX11::createPrimaryMonitor()
-{
-    return std::make_unique<MonitorImplX11>();
-}
 
 
 ////////////////////////////////////////////////////////////
@@ -128,8 +120,7 @@ std::vector<VideoMode> MonitorImplX11::getFullscreenModes()
                 for (int j = 0; j < nbSizes; ++j)
                 {
                     // Convert to VideoMode
-                    VideoMode mode({static_cast<unsigned int>(sizes[j].width),
-                                    static_cast<unsigned int>(sizes[j].height)},
+                    VideoMode mode({ sizes[j].width, sizes[j].height },
                                     static_cast<unsigned int>(depths[i]));
 
                     Rotation currentRotation = 0;
@@ -151,7 +142,7 @@ std::vector<VideoMode> MonitorImplX11::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
-VideoMode MonitorImplX11::getDesktopMode()
+VideoModeDesktop MonitorImplX11::getDesktopMode()
 {
     VideoMode desktopMode;
 
@@ -164,8 +155,7 @@ VideoMode MonitorImplX11::getDesktopMode()
     XRRScreenSize* sizes   = XRRConfigSizes(m_config.get(), &nbSizes);
     if (sizes && (nbSizes > 0))
     {
-        desktopMode = VideoMode({static_cast<unsigned int>(sizes[currentMode].width),
-                                    static_cast<unsigned int>(sizes[currentMode].height)},
+        desktopMode = VideoMode({ sizes[currentMode].width, sizes[currentMode].height },
                                 static_cast<unsigned int>(DefaultDepth(m_display.get(), m_screen)));
 
         Rotation modeRotation = 0;
@@ -175,7 +165,7 @@ VideoMode MonitorImplX11::getDesktopMode()
             std::swap(desktopMode.size.x, desktopMode.size.y);
     }
 
-    return desktopMode;
+    return VideoModeDesktop{ desktopMode, sf::Vector2i() };
 }
 
 } // namespace sf::priv
