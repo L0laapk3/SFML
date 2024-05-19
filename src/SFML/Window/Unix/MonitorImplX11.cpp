@@ -78,7 +78,7 @@ MonitorImplX11::MonitorImplX11(std::shared_ptr<Display> display, int screen)
     : m_display(std::move(display))
     , m_screen(screen)
     , m_config(X11Ptr<XRRScreenConfiguration>(
-        XRRGetScreenInfo(display.get(), RootWindow(display.get(), screen))))
+        XRRGetScreenInfo(m_display.get(), RootWindow(m_display.get(), m_screen))))
 {
     if (!m_config)
     {
@@ -99,7 +99,6 @@ std::unique_ptr<MonitorImpl> MonitorImplX11::createPrimaryMonitor()
     // Retrieve the default screen number
     return std::make_unique<MonitorImplX11>(std::move(display), screen);
 }
-
 
 ////////////////////////////////////////////////////////////
 std::vector<std::unique_ptr<MonitorImpl>> MonitorImplX11::createAllMonitors()
