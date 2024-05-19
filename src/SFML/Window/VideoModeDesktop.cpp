@@ -31,9 +31,9 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-VideoModeDesktop::VideoModeDesktop(const VideoMode& mode, const Vector2i& position) :
+VideoModeDesktop::VideoModeDesktop(const VideoMode& mode, const Vector2i& _position) :
 	VideoMode(mode),
-	position(position)
+	position(_position)
 {
 }
 

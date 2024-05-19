@@ -44,14 +44,10 @@ namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
-template <>
 void XDeleter<XRRScreenConfiguration>::operator()(XRRScreenConfiguration* config) const
 {
-    void operator()(XRRScreenConfiguration* config) const
-    {
-        XRRFreeScreenConfigInfo(config);
-    }
-};
+	XRRFreeScreenConfigInfo(config);
+}
 
 
 ////////////////////////////////////////////////////////////

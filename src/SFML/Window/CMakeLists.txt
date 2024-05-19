@@ -41,6 +41,8 @@ set(SRC
     ${SRCROOT}/SensorManager.hpp
     ${SRCROOT}/VideoMode.cpp
     ${INCROOT}/VideoMode.hpp
+    ${SRCROOT}/VideoModeDesktop.cpp
+    ${INCROOT}/VideoModeDesktop.hpp
     ${SRCROOT}/Vulkan.cpp
     ${INCROOT}/Vulkan.hpp
     ${SRCROOT}/Window.cpp
