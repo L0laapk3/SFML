@@ -92,6 +92,13 @@ Monitor Monitor::getPrimaryMonitor()
     return MonitorImplType::createPrimaryMonitor();
 }
 
+////////////////////////////////////////////////////////////
+Monitor Monitor::getAllMonitors()
+{
+    // Call OS-specific implementation creator for primary monitor
+    return MonitorImplType::createAllMonitors();
+}
+
 
 ////////////////////////////////////////////////////////////
 VideoModeDesktop Monitor::getDesktopMode()
@@ -111,16 +118,11 @@ bool Monitor::isValidMode(const VideoMode& mode)
 
 
 ////////////////////////////////////////////////////////////
-const std::vector<VideoMode>& Monitor::getFullscreenModes()
+std::vector<VideoMode> Monitor::getFullscreenModes()
 {
-    static const auto modes = [&]
-    {
-        std::vector<VideoMode> result = static_cast<MonitorImplType*>(m_impl.get())->getFullscreenModes();
-        std::sort(result.begin(), result.end(), std::greater<>());
-        return result;
-    }();
-
-    return modes;
+	std::vector<VideoMode> result = static_cast<MonitorImplType*>(m_impl.get())->getFullscreenModes();
+	std::sort(result.begin(), result.end(), std::greater<>());
+	return result;
 }
 
 } // namespace sf

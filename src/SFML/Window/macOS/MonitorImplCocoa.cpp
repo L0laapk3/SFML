@@ -49,6 +49,13 @@ std::unique_ptr<MonitorImpl> MonitorImplCocoa::createPrimaryMonitor()
 
 
 ////////////////////////////////////////////////////////////
+std::vector<MonitorImpl> MonitorImplCocoa::createAllMonitors()
+{
+	throw std::runtime_error("MonitorImplCocoa::createAllMonitors() is not implemented");
+}
+
+
+////////////////////////////////////////////////////////////
 std::vector<VideoMode> MonitorImplCocoa::getFullscreenModes()
 {
     std::vector<VideoMode> modes;

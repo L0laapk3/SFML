@@ -31,6 +31,7 @@
 #include <SFML/System/Win32/WindowsHeader.hpp>
 
 #include <algorithm>
+#include <stdexcept>
 
 
 namespace sf::priv
@@ -43,6 +44,13 @@ MonitorImplWin32::MonitorImplWin32() = default;
 std::unique_ptr<MonitorImpl> MonitorImplWin32::createPrimaryMonitor()
 {
     return std::make_unique<MonitorImplWin32>();
+}
+
+
+////////////////////////////////////////////////////////////
+std::vector<MonitorImpl> MonitorImplWin32::createAllMonitors()
+{
+	throw std::runtime_error("MonitorImplWin32::createAllMonitors() is not implemented");
 }
 
 

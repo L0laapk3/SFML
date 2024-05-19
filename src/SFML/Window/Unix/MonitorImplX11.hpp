@@ -71,6 +71,14 @@ public:
     static std::unique_ptr<MonitorImpl> createPrimaryMonitor();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Create all monitor implementations
+    ///
+    /// \return Pointer to the created primary monitor implementation
+    ///
+    ////////////////////////////////////////////////////////////
+    static std::vector<MonitorImpl> createAllMonitors();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the list of all the supported fullscreen video modes of this monitor
     ///
     /// \return Array filled with the fullscreen video modes of this monitor

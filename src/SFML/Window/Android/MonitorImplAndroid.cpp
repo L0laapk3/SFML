@@ -48,6 +48,13 @@ std::unique_ptr<MonitorImpl> MonitorImplAndroid::createPrimaryMonitor()
 
 
 ////////////////////////////////////////////////////////////
+std::vector<MonitorImpl> MonitorImplAndroid::createAllMonitors()
+{
+	throw std::runtime_error("MonitorImplAndroid::createAllMonitors() is not implemented");
+}
+
+
+////////////////////////////////////////////////////////////
 std::vector<VideoMode> MonitorImplAndroid::getFullscreenModes()
 {
     const VideoMode desktop = getDesktopMode();

@@ -69,6 +69,14 @@ public:
     static Monitor getPrimaryMonitor();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the all monitors
+    ///
+    /// \return Vector of monitors
+    ///
+    ////////////////////////////////////////////////////////////
+    static std::vector<Monitor> getAllMonitors();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Retrieve all the fullscreen video modes this monitor supports
     ///
     /// When creating a fullscreen window, the video mode is restricted
@@ -82,7 +90,7 @@ public:
     /// \return Array containing all  the fullscreen video modes this monitor supports
     ///
     ////////////////////////////////////////////////////////////
-    const std::vector<VideoMode>& getFullscreenModes();
+    std::vector<VideoMode> getFullscreenModes();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current desktop video mode of this monitor

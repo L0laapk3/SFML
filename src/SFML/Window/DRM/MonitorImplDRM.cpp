@@ -47,6 +47,13 @@ std::unique_ptr<MonitorImpl> MonitorImplDRM::createPrimaryMonitor()
 
 
 ////////////////////////////////////////////////////////////
+std::vector<MonitorImpl> MonitorImplDRM::createAllMonitors()
+{
+	throw std::runtime_error("MonitorImplDRM::createAllMonitors() is not implemented");
+}
+
+
+////////////////////////////////////////////////////////////
 std::vector<VideoMode> MonitorImplDRM::getFullscreenModes()
 {
     std::vector<VideoMode> modes;

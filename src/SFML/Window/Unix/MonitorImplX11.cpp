@@ -95,6 +95,13 @@ std::unique_ptr<MonitorImpl> MonitorImplX11::createPrimaryMonitor()
     return std::make_unique<MonitorImplX11>(std::move(display), screen, std::move(config));
 }
 
+
+////////////////////////////////////////////////////////////
+std::vector<MonitorImpl> MonitorImplX11::createAllMonitors()
+{
+	throw std::runtime_error("MonitorImplX11::createAllMonitors() is not implemented");
+}
+
 ////////////////////////////////////////////////////////////
 std::vector<VideoMode> MonitorImplX11::getFullscreenModes()
 {
