@@ -25,7 +25,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/MonitorImplX11.hpp>
+#include <SFML/Window/Unix/Utils.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
 #include <SFML/System/Err.hpp>
@@ -42,7 +44,21 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 void XDeleter<XRRScreenConfiguration>::operator()(XRRScreenConfiguration* config) const
 {
-    XRRFreeScreenConfigInfo(config);
+    void operator()(XRRScreenConfiguration* config) const
+    {
+        XRRFreeScreenConfigInfo(config);
+    }
+};
+
+
+////////////////////////////////////////////////////////////
+MonitorImplX11::MonitorImplX11() = default;
+
+
+////////////////////////////////////////////////////////////
+std::unique_ptr<MonitorImpl> MonitorImplX11::createPrimaryMonitor()
+{
+    return std::make_unique<MonitorImplX11>();
 }
 
 

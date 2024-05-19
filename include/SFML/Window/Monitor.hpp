@@ -31,8 +31,8 @@
 
 #include <SFML/System/Vector2.hpp>
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 
 namespace sf
@@ -57,7 +57,7 @@ class SFML_WINDOW_API Monitor
     Monitor(std::unique_ptr<priv::MonitorImpl>&& impl);
 
 public:
-	~Monitor();
+    ~Monitor();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the primary monitor
