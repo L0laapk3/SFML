@@ -48,7 +48,7 @@ std::unique_ptr<MonitorImpl> MonitorImplAndroid::createPrimaryMonitor()
 
 
 ////////////////////////////////////////////////////////////
-std::vector<MonitorImpl> MonitorImplAndroid::createAllMonitors()
+std::vector<std::unique_ptr<MonitorImpl>> MonitorImplAndroid::createAllMonitors()
 {
 	throw std::runtime_error("MonitorImplAndroid::createAllMonitors() is not implemented");
 }

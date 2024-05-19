@@ -45,7 +45,7 @@ std::unique_ptr<MonitorImpl> MonitorImplUIKit::createPrimaryMonitor()
 
 
 ////////////////////////////////////////////////////////////
-std::vector<MonitorImpl> MonitorImplUIKit::createAllMonitors()
+std::vector<std::unique_ptr<MonitorImpl>> MonitorImplUIKit::createAllMonitors()
 {
 	throw std::runtime_error("MonitorImplUIKit::createAllMonitors() is not implemented");
 }

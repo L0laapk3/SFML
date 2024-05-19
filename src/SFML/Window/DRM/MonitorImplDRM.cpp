@@ -47,7 +47,7 @@ std::unique_ptr<MonitorImpl> MonitorImplDRM::createPrimaryMonitor()
 
 
 ////////////////////////////////////////////////////////////
-std::vector<MonitorImpl> MonitorImplDRM::createAllMonitors()
+std::vector<std::unique_ptr<MonitorImpl>> MonitorImplDRM::createAllMonitors()
 {
 	throw std::runtime_error("MonitorImplDRM::createAllMonitors() is not implemented");
 }

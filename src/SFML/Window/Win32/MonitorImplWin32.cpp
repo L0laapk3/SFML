@@ -48,7 +48,7 @@ std::unique_ptr<MonitorImpl> MonitorImplWin32::createPrimaryMonitor()
 
 
 ////////////////////////////////////////////////////////////
-std::vector<MonitorImpl> MonitorImplWin32::createAllMonitors()
+std::vector<std::unique_ptr<MonitorImpl>> MonitorImplWin32::createAllMonitors()
 {
 	throw std::runtime_error("MonitorImplWin32::createAllMonitors() is not implemented");
 }

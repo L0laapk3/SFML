@@ -49,7 +49,7 @@ std::unique_ptr<MonitorImpl> MonitorImplCocoa::createPrimaryMonitor()
 
 
 ////////////////////////////////////////////////////////////
-std::vector<MonitorImpl> MonitorImplCocoa::createAllMonitors()
+std::vector<std::unique_ptr<MonitorImpl>> MonitorImplCocoa::createAllMonitors()
 {
 	throw std::runtime_error("MonitorImplCocoa::createAllMonitors() is not implemented");
 }
