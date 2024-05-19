@@ -152,7 +152,7 @@ SFML_WINDOW_API bool operator>=(const VideoMode& left, const VideoMode& right);
 ///
 /// The main usage of video modes is for fullscreen mode:
 /// indeed you must use one of the valid video modes
-/// allowed by the OS (which are defined by what the monitor
+/// allowed by the OS (which are defined by what the display
 /// and the graphics card support), otherwise your window
 /// creation will just fail.
 ///

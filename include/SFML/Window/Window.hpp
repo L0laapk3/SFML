@@ -227,7 +227,7 @@ public:
     /// \brief Enable or disable vertical synchronization
     ///
     /// Activating vertical synchronization will limit the number
-    /// of frames displayed to the refresh rate of the monitor.
+    /// of frames displayed to the refresh rate of the display.
     /// This can avoid some visual artifacts, and limit the framerate
     /// to a good value (but not constant across different computers).
     ///

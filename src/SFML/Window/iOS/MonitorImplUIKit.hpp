@@ -39,38 +39,38 @@ namespace priv
 ////////////////////////////////////////////////////////////
 /// \brief iOS (UIKit) implementation of MonitorImpl
 ///
-/// \note Placeholder class. Actual storage of the monitor handle not implemented yet.
+/// \note Placeholder class. Actual storage of the display handle not implemented yet.
 ///
 ////////////////////////////////////////////////////////////
 class MonitorImplUIKit : public MonitorImpl
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the monitor implementation
+    /// \brief Construct the display implementation
     ///
     ////////////////////////////////////////////////////////////
     MonitorImplUIKit();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create primary monitor implementation
+    /// \brief Create primary display implementation
     ///
-    /// \return Pointer to the created primary monitor implementation
+    /// \return Pointer to the created primary display implementation
     ///
     ////////////////////////////////////////////////////////////
     static std::unique_ptr<MonitorImpl> createPrimaryMonitor();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the list of all the supported fullscreen video modes of this monitor
+    /// \brief Get the list of all the supported fullscreen video modes of this display
     ///
-    /// \return Array filled with the fullscreen video modes of this monitor
+    /// \return Array filled with the fullscreen video modes of this display
     ///
     ////////////////////////////////////////////////////////////
     std::vector<VideoMode> getFullscreenModes();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the current desktop video mode of this monitor
+    /// \brief Get the current desktop video mode of this display
     ///
-    /// \return Current desktop video mode of this monitor
+    /// \return Current desktop video mode of this display
     ///
     ////////////////////////////////////////////////////////////
     VideoMode getDesktopMode();

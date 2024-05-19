@@ -25,8 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Monitor.hpp>
-#include <SFML/Window/MonitorImpl.hpp>
+#include <SFML/Window/Display.hpp>
+#include <SFML/Window/DisplayImpl.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
 #include <algorithm>
@@ -36,38 +36,38 @@
 
 #if defined(SFML_SYSTEM_WINDOWS)
 
-#include <SFML/Window/Win32/MonitorImplWin32.hpp>
-using MonitorImplType = sf::priv::MonitorImplWin32;
+#include <SFML/Window/Win32/DisplayImplWin32.hpp>
+using DisplayImplType = sf::priv::DisplayImplWin32;
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || \
     defined(SFML_SYSTEM_NETBSD)
 
 #if defined(SFML_USE_DRM)
 
-#include <SFML/Window/DRM/MonitorImplDRM.hpp>
-using MonitorImplType = sf::priv::MonitorImplDRM;
+#include <SFML/Window/DRM/DisplayImplDRM.hpp>
+using DisplayImplType = sf::priv::DisplayImplDRM;
 
 #else
 
-#include <SFML/Window/Unix/MonitorImplX11.hpp>
-using MonitorImplType = sf::priv::MonitorImplX11;
+#include <SFML/Window/Unix/DisplayImplX11.hpp>
+using DisplayImplType = sf::priv::DisplayImplX11;
 
 #endif
 
 #elif defined(SFML_SYSTEM_MACOS)
 
-#include <SFML/Window/macOS/MonitorImplCocoa.hpp>
-using MonitorImplType = sf::priv::MonitorImplCocoa;
+#include <SFML/Window/macOS/DisplayImplCocoa.hpp>
+using DisplayImplType = sf::priv::DisplayImplCocoa;
 
 #elif defined(SFML_SYSTEM_IOS)
 
-#include <SFML/Window/iOS/MonitorImplUIKit.hpp>
-using MonitorImplType = sf::priv::MonitorImplUIKit;
+#include <SFML/Window/iOS/DisplayImplUIKit.hpp>
+using DisplayImplType = sf::priv::DisplayImplUIKit;
 
 #elif defined(SFML_SYSTEM_ANDROID)
 
-#include <SFML/Window/Android/MonitorImplAndroid.hpp>
-using MonitorImplType = sf::priv::MonitorImplAndroid;
+#include <SFML/Window/Android/DisplayImplAndroid.hpp>
+using DisplayImplType = sf::priv::DisplayImplAndroid;
 
 #endif
 
@@ -77,32 +77,32 @@ namespace sf
 
 
 ////////////////////////////////////////////////////////////
-Monitor::Monitor(std::unique_ptr<priv::MonitorImpl>&& impl) : m_impl(std::move(impl))
+Display::Display(std::unique_ptr<priv::DisplayImpl>&& impl) : m_impl(std::move(impl))
 {
 }
 
 ////////////////////////////////////////////////////////////
 // Must be in this compilation unit, not inferred from header
-Monitor::~Monitor() = default;
+Display::~Display() = default;
 
 ////////////////////////////////////////////////////////////
-Monitor Monitor::getPrimaryMonitor()
+Display Display::getPrimaryDisplay()
 {
-    // Call OS-specific implementation creator for primary monitor
-    return MonitorImplType::createPrimaryMonitor();
+    // Call OS-specific implementation creator for primary display
+    return DisplayImplType::createPrimaryDisplay();
 }
 
 
 ////////////////////////////////////////////////////////////
-VideoMode Monitor::getDesktopMode()
+VideoMode Display::getDesktopMode()
 {
     // Directly forward to the OS-specific implementation
-    return static_cast<MonitorImplType*>(m_impl.get())->getDesktopMode();
+    return static_cast<DisplayImplType*>(m_impl.get())->getDesktopMode();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Monitor::isValid(const VideoMode& mode)
+bool Display::isValid(const VideoMode& mode)
 {
     const std::vector<VideoMode>& modes = getFullscreenModes();
 
@@ -111,11 +111,11 @@ bool Monitor::isValid(const VideoMode& mode)
 
 
 ////////////////////////////////////////////////////////////
-const std::vector<VideoMode>& Monitor::getFullscreenModes()
+const std::vector<VideoMode>& Display::getFullscreenModes()
 {
     static const auto modes = [&]
     {
-        std::vector<VideoMode> result = static_cast<MonitorImplType*>(m_impl.get())->getFullscreenModes();
+        std::vector<VideoMode> result = static_cast<DisplayImplType*>(m_impl.get())->getFullscreenModes();
         std::sort(result.begin(), result.end(), std::greater<>());
         return result;
     }();

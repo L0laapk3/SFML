@@ -261,7 +261,7 @@ int hasMonitorConnected(int fd, drmModeRes& resources)
         connector = drmModeGetConnector(fd, resources.connectors[i]);
         if (connector->connection == DRM_MODE_CONNECTED)
         {
-            // There is a monitor connected
+            // There is a display connected
             drmModeFreeConnector(connector);
             connector = nullptr;
             return 1;

@@ -41,64 +41,64 @@ class VideoMode;
 
 namespace priv
 {
-class MonitorImpl;
+class DisplayImpl;
 }
 
 ////////////////////////////////////////////////////////////
-/// \brief Monitor represents a monitor made available by the OS
+/// \brief Display represents a display made available by the OS
 ///
 ////////////////////////////////////////////////////////////
-class SFML_WINDOW_API Monitor
+class SFML_WINDOW_API Display
 {
     ////////////////////////////////////////////////////////////
-    /// \brief Construct monitor with a MonitorImpl pointer
+    /// \brief Construct display with a DisplayImpl pointer
     ///
     ////////////////////////////////////////////////////////////
-    Monitor(std::unique_ptr<priv::MonitorImpl>&& impl);
+    Display(std::unique_ptr<priv::DisplayImpl>&& impl);
 
 public:
-    ~Monitor();
+    ~Display();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the primary monitor
+    /// \brief Get the primary display
     ///
-    /// \return Primary monitor
+    /// \return Primary display
     ///
     ////////////////////////////////////////////////////////////
-    static Monitor getPrimaryMonitor();
+    static Display getPrimaryDisplay();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Retrieve all the fullscreen video modes this monitor supports
+    /// \brief Retrieve all the fullscreen video modes this display supports
     ///
     /// When creating a fullscreen window, the video mode is restricted
-    /// to be compatible with what the graphics driver and monitor
+    /// to be compatible with what the graphics driver and display
     /// support. This function returns the complete list of all video
     /// modes that can be used in fullscreen mode.
     /// The returned array is sorted from best to worst, so that
     /// the first element will always give the best mode (higher
     /// width, height and bits-per-pixel).
     ///
-    /// \return Array containing all  the fullscreen video modes this monitor supports
+    /// \return Array containing all  the fullscreen video modes this display supports
     ///
     ////////////////////////////////////////////////////////////
     const std::vector<VideoMode>& getFullscreenModes();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the current desktop video mode of this monitor
+    /// \brief Get the current desktop video mode of this display
     ///
-    /// \return Current desktop video mode of this monitor
+    /// \return Current desktop video mode of this display
     ///
     ////////////////////////////////////////////////////////////
     VideoMode getDesktopMode();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Tell whether or not the video mode is valid on this monitor
+    /// \brief Tell whether or not the video mode is valid on this display
     ///
     /// The validity of video modes is only relevant when using
     /// fullscreen windows; otherwise any video mode can be used
     /// with no restriction.
     ///
-    /// \return True if the video mode is valid for fullscreen mode on this monitor
+    /// \return True if the video mode is valid for fullscreen mode on this display
     ///
     ////////////////////////////////////////////////////////////
     bool isValid(const VideoMode& mode);
@@ -107,37 +107,37 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const std::unique_ptr<priv::MonitorImpl> m_impl; //!< Platform-specific implementation of the monitor
+    const std::unique_ptr<priv::DisplayImpl> m_impl; //!< Platform-specific implementation of the display
 };
 
 } // namespace sf
 
 
 ////////////////////////////////////////////////////////////
-/// \class sf::Monitor
+/// \class sf::Display
 /// \ingroup window
 ///
-/// A monitor is an abstraction to represent a display.
+/// A display is an abstraction to represent a display.
 ///
-/// A monitor object of the primary can be obtained using
-/// the static function getPrimaryMonitor().
+/// A display object of the primary can be obtained using
+/// the static function getPrimaryDisplay().
 ///
-/// sf::Monitor provides a function for retrieving the list of
-/// all the video modes supported by that monitor and the system:
+/// sf::Display provides a function for retrieving the list of
+/// all the video modes supported by that display and the system:
 /// getFullscreenModes().
 ///
 /// A custom video mode can also be checked directly for
 /// fullscreen compatibility with its isValid(sf::VideoMode) function.
 ///
-/// Additionally, sf::Monitor provides a function to get the mode
-/// currently used by the desktop for that monitor: getDesktopMode().
+/// Additionally, sf::Display provides a function to get the mode
+/// currently used by the desktop for that display: getDesktopMode().
 /// This allows to build windows with the same size or pixel
 /// depth as the current resolution.
 ///
 /// Usage example:
 /// \code
 /// // Display the list of all the video modes available for fullscreen
-/// std::vector<sf::VideoMode> modes = sf::Monitor::getPrimaryMonitor().getFullscreenModes();
+/// std::vector<sf::VideoMode> modes = sf::Display::getPrimaryDisplay().getFullscreenModes();
 /// for (std::size_t i = 0; i < modes.size(); ++i)
 /// {
 ///     sf::VideoMode mode = modes[i];
@@ -147,7 +147,7 @@ private:
 /// }
 ///
 /// // Create a window with the same pixel depth as the desktop
-/// sf::VideoMode desktop = sf::Monitor::getPrimaryMonitor().getDesktopMode();
+/// sf::VideoMode desktop = sf::Display::getPrimaryDisplay().getDesktopMode();
 /// window.create(sf::VideoMode({1024, 768}, desktop.bitsPerPixel), "SFML window");
 /// \endcode
 ///
@@ -156,10 +156,10 @@ private:
 ///
 /// Usage example:
 /// \code
-/// // Display the list of all the video modes available for fullscreen for the primary monitor
-/// sf::Monitor monitor = sf::Monitor::getPrimaryMonitor();
+/// // Display the list of all the video modes available for fullscreen for the primary display
+/// sf::Display display = sf::Display::getPrimaryDisplay();
 ///
-/// std::vector<sf::VideoMode> modes = monitor.getFullscreenModes();
+/// std::vector<sf::VideoMode> modes = display.getFullscreenModes();
 /// for (std::size_t i = 0; i < modes.size(); ++i)
 /// {
 ///     sf::VideoMode mode = modes[i];
@@ -169,7 +169,7 @@ private:
 /// }
 ///
 /// // Create a window with the same pixel depth as the desktop
-/// sf::VideoMode desktopMode = monitor.getDesktopMode();
+/// sf::VideoMode desktopMode = display.getDesktopMode();
 /// window.create(sf::VideoMode(desktopMode, "SFML window");
 /// \endcode
 ///

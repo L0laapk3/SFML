@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/VideoMode.hpp>
-#include <SFML/Window/Win32/MonitorImplWin32.hpp>
+#include <SFML/Window/Win32/DisplayImplWin32.hpp>
 
 #include <SFML/System/Win32/WindowsHeader.hpp>
 
@@ -36,18 +36,18 @@
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-MonitorImplWin32::MonitorImplWin32() = default;
+DisplayImplWin32::DisplayImplWin32() = default;
 
 
 ////////////////////////////////////////////////////////////
-std::unique_ptr<MonitorImpl> MonitorImplWin32::createPrimaryMonitor()
+std::unique_ptr<DisplayImpl> DisplayImplWin32::createPrimaryDisplay()
 {
-    return std::make_unique<MonitorImplWin32>();
+    return std::make_unique<DisplayImplWin32>();
 }
 
 
 ////////////////////////////////////////////////////////////
-std::vector<VideoMode> MonitorImplWin32::getFullscreenModes()
+std::vector<VideoMode> DisplayImplWin32::getFullscreenModes()
 {
     std::vector<VideoMode> modes;
 
@@ -70,7 +70,7 @@ std::vector<VideoMode> MonitorImplWin32::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
-VideoMode MonitorImplWin32::getDesktopMode()
+VideoMode DisplayImplWin32::getDesktopMode()
 {
     DEVMODE win32Mode;
     win32Mode.dmSize        = sizeof(win32Mode);
