@@ -102,7 +102,7 @@ VideoModeDesktop Monitor::getDesktopMode()
 
 
 ////////////////////////////////////////////////////////////
-bool Monitor::isValid(const VideoMode& mode)
+bool Monitor::isValidMode(const VideoMode& mode)
 {
     const std::vector<VideoMode>& modes = getFullscreenModes();
 

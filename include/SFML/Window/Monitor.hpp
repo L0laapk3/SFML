@@ -102,7 +102,7 @@ public:
     /// \return True if the video mode is valid for fullscreen mode on this monitor
     ///
     ////////////////////////////////////////////////////////////
-    bool isValid(const VideoMode& mode);
+    bool isValidMode(const VideoMode& mode);
 
 private:
     ////////////////////////////////////////////////////////////
