@@ -51,23 +51,13 @@ void XDeleter<XRRScreenConfiguration>::operator()(XRRScreenConfiguration* config
 
 
 ////////////////////////////////////////////////////////////
-MonitorImplX11::MonitorImplX11(std::shared_ptr<Display>&& display, int screen, X11Ptr<XRRScreenConfiguration>&& config)
-    : m_display(std::move(display))
-    , m_screen(screen)
-    , m_config(std::move(config))
-{
-}
-
-
-////////////////////////////////////////////////////////////
-std::unique_ptr<MonitorImpl> MonitorImplX11::createPrimaryMonitor()
-{
+std::shared_ptr<Display> MonitorImplX11::openXDisplay() {
     // Open a connection with the X server
     auto display = openDisplay();
     if (!display)
     {
         err() << "Failed to connect to the X server while trying to get the supported video modes" << std::endl;
-        return nullptr;
+        throw std::runtime_error("Failed to connect to the X server");
     }
 
     // Check if the XRandR extension is present
@@ -76,30 +66,57 @@ std::unique_ptr<MonitorImpl> MonitorImplX11::createPrimaryMonitor()
     {
         // XRandr extension is not supported: we cannot get the video modes
         err() << "Failed to use the XRandR extension while trying to get the supported video modes" << std::endl;
-        return nullptr;
+        throw std::runtime_error("Failed to use the XRandR extension");
     }
 
-    auto screen = DefaultScreen(display.get());
-
-    // Get the current configuration
-    auto config = X11Ptr<XRRScreenConfiguration>(
-        XRRGetScreenInfo(display.get(), RootWindow(display.get(), screen)));
-    if (!config)
-    {
-        err() << "Failed to retrieve the screen configuration while trying to get the supported video modes"
-                << std::endl;
-        return nullptr;
-    }
-
-    // Retrieve the default screen number
-    return std::make_unique<MonitorImplX11>(std::move(display), screen, std::move(config));
+	return display;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::vector<MonitorImpl> MonitorImplX11::createAllMonitors()
+MonitorImplX11::MonitorImplX11(std::shared_ptr<Display> display, int screen)
+    : m_display(std::move(display))
+    , m_screen(screen)
+    , m_config(X11Ptr<XRRScreenConfiguration>(
+        XRRGetScreenInfo(display.get(), RootWindow(display.get(), screen))))
 {
-	throw std::runtime_error("MonitorImplX11::createAllMonitors() is not implemented");
+    if (!m_config)
+    {
+        err() << "Failed to retrieve the screen configuration while trying to get the supported video modes"
+                << std::endl;
+        throw std::runtime_error("Failed to retrieve the screen configuration");
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+std::unique_ptr<MonitorImpl> MonitorImplX11::createPrimaryMonitor()
+{
+	auto display = openXDisplay();
+
+    auto screen = DefaultScreen(display.get());
+
+    // Retrieve the default screen number
+    return std::make_unique<MonitorImplX11>(std::move(display), screen);
+}
+
+
+////////////////////////////////////////////////////////////
+std::vector<std::unique_ptr<MonitorImpl>> MonitorImplX11::createAllMonitors()
+{
+	auto display = openXDisplay();
+
+	const auto numScreens = ScreenCount(display.get());
+
+	std::vector<std::unique_ptr<MonitorImpl>> monitors;
+	monitors.reserve(static_cast<size_t>(numScreens));
+
+	for (int i = 0; i < numScreens; ++i)
+	{
+		monitors.push_back(std::make_unique<MonitorImplX11>(display, i));
+	}
+
+	return monitors;
 }
 
 ////////////////////////////////////////////////////////////

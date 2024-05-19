@@ -82,6 +82,11 @@ Monitor::Monitor(std::unique_ptr<priv::MonitorImpl>&& impl) : m_impl(std::move(i
 }
 
 ////////////////////////////////////////////////////////////
+Monitor::Monitor(Monitor&& other) noexcept : m_impl(std::move(const_cast<std::unique_ptr<priv::MonitorImpl>&&>(other.m_impl)))
+{
+}
+
+////////////////////////////////////////////////////////////
 // Must be in this compilation unit, not inferred from header
 Monitor::~Monitor() = default;
 
@@ -93,10 +98,20 @@ Monitor Monitor::getPrimaryMonitor()
 }
 
 ////////////////////////////////////////////////////////////
-Monitor Monitor::getAllMonitors()
+std::vector<Monitor> Monitor::getAllMonitors()
 {
-    // Call OS-specific implementation creator for primary monitor
-    return MonitorImplType::createAllMonitors();
+	// Call OS-specific implementation creator for all monitors
+	auto impls = MonitorImplType::createAllMonitors();
+
+	std::vector<Monitor> monitors;
+	monitors.reserve(impls.size());
+
+	for (auto&& monitorImpl : impls)
+	{
+		monitors.emplace_back(Monitor(std::move(monitorImpl)));
+	}
+
+	return monitors;
 }
 
 

@@ -33,6 +33,8 @@
 
 #include <X11/extensions/Xrandr.h>
 
+#include <stdexcept>
+
 
 namespace sf
 {
@@ -49,6 +51,7 @@ struct XDeleter<XRRScreenConfiguration>
     void operator()(XRRScreenConfiguration* config) const;
 };
 
+
 ////////////////////////////////////////////////////////////
 /// \brief Linux (X11) implementation of MonitorImpl
 ///
@@ -56,11 +59,22 @@ struct XDeleter<XRRScreenConfiguration>
 class MonitorImplX11 : public MonitorImpl
 {
 public:
+
+	////////////////////////////////////////////////////////////
+	/// \brief X11 exception. A type of runtime_error
+	///
+	////////////////////////////////////////////////////////////
+	class X11Exception : public std::runtime_error
+	{
+	public:
+		explicit X11Exception(const std::string& message);
+	};
+
     ////////////////////////////////////////////////////////////
     /// \brief Construct the monitor implementation
     ///
     ////////////////////////////////////////////////////////////
-    MonitorImplX11(std::shared_ptr<Display>&& display, int screen, X11Ptr<XRRScreenConfiguration>&& config);
+    MonitorImplX11(std::shared_ptr<Display> display, int screen);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create primary monitor implementation
@@ -76,7 +90,7 @@ public:
     /// \return Pointer to the created primary monitor implementation
     ///
     ////////////////////////////////////////////////////////////
-    static std::vector<MonitorImpl> createAllMonitors();
+    static std::vector<std::unique_ptr<MonitorImpl>> createAllMonitors();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the list of all the supported fullscreen video modes of this monitor
@@ -95,6 +109,14 @@ public:
     VideoModeDesktop getDesktopMode();
 
 private:
+	////////////////////////////////////////////////////////////
+	/// \brief Open a connection with the X server
+	///
+	/// \return Shared pointer to the created display
+	///
+	////////////////////////////////////////////////////////////
+	static std::shared_ptr<Display> openXDisplay();
+
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
