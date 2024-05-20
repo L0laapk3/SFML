@@ -37,11 +37,4 @@ VideoModeDesktop::VideoModeDesktop(const VideoMode& mode, const Vector2i& _posit
 {
 }
 
-
-////////////////////////////////////////////////////////////
-VideoModeDesktop::VideoModeDesktop(const Rect<int>& sizePosition, unsigned int modeBitsPerPixel) :
-	VideoModeDesktop(VideoMode(sizePosition.getSize(), modeBitsPerPixel), sizePosition.getPosition())
-{
-}
-
 } // namespace sf

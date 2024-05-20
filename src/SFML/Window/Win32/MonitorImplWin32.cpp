@@ -88,7 +88,7 @@ std::vector<VideoMode> MonitorImplWin32::getFullscreenModes()
     for (int count = 0; EnumDisplaySettings(getDeviceNamePtr(), static_cast<DWORD>(count), &win32Mode); ++count)
     {
         // Convert to sf::VideoMode
-        const VideoMode mode({static_cast<int>(win32Mode.dmPelsWidth), static_cast<int>(win32Mode.dmPelsHeight)}, win32Mode.dmBitsPerPel);
+        const VideoMode mode({win32Mode.dmPelsWidth, win32Mode.dmPelsHeight}, win32Mode.dmBitsPerPel);
 
         // Add it only if it is not already in the array
         if (std::find(modes.begin(), modes.end(), mode) == modes.end())
@@ -107,7 +107,7 @@ VideoModeDesktop MonitorImplWin32::getDesktopMode()
     win32Mode.dmDriverExtra = 0;
     EnumDisplaySettings(getDeviceNamePtr(), ENUM_CURRENT_SETTINGS, &win32Mode);
 
-    return VideoModeDesktop(VideoMode({static_cast<int>(win32Mode.dmPelsWidth), static_cast<int>(win32Mode.dmPelsHeight)}, win32Mode.dmBitsPerPel), sf::Vector2i());
+    return VideoModeDesktop(VideoMode({win32Mode.dmPelsWidth, win32Mode.dmPelsHeight}, win32Mode.dmBitsPerPel), sf::Vector2i());
 }
 
 } // namespace sf::priv
