@@ -1324,7 +1324,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
             std::swap(res->modes[i].height, res->modes[i].width);
 
         // Check if screen size match
-        if ((static_cast<int>(res->modes[i].width) == mode.size.x) && (static_cast<int>(res->modes[i].height) == mode.size.y))
+        if ((res->modes[i].width == mode.size.x) && (res->modes[i].height == mode.size.y))
         {
             xRandMode = res->modes[i].id;
             modeFound = true;

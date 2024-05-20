@@ -38,6 +38,7 @@
 #include <algorithm>
 #include <memory>
 #include <ostream>
+#include <iostream>
 
 
 namespace sf::priv
@@ -139,7 +140,7 @@ std::vector<VideoMode> MonitorImplX11::getFullscreenModes()
                 for (int j = 0; j < nbSizes; ++j)
                 {
                     // Convert to VideoMode
-                    VideoMode mode({ sizes[j].width, sizes[j].height },
+                    VideoMode mode({ static_cast<unsigned int>(sizes[j].width), static_cast<unsigned int>(sizes[j].height) },
                                     static_cast<unsigned int>(depths[i]));
 
                     Rotation currentRotation = 0;
@@ -174,7 +175,7 @@ VideoModeDesktop MonitorImplX11::getDesktopMode()
     XRRScreenSize* sizes   = XRRConfigSizes(m_config.get(), &nbSizes);
     if (sizes && (nbSizes > 0))
     {
-        desktopMode = VideoMode({ sizes[currentMode].width, sizes[currentMode].height },
+        desktopMode = VideoMode({ static_cast<unsigned int>(sizes[currentMode].width), static_cast<unsigned int>(sizes[currentMode].height) },
                                 static_cast<unsigned int>(DefaultDepth(m_display.get(), m_screen)));
 
         Rotation modeRotation = 0;
