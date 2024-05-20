@@ -75,23 +75,25 @@ using MonitorImplType = sf::priv::MonitorImplAndroid;
 namespace sf
 {
 
-
 ////////////////////////////////////////////////////////////
-Monitor::Monitor(std::unique_ptr<priv::MonitorImpl>&& impl) : m_impl(std::move(impl))
+Monitor::Monitor(priv::MonitorImpl* impl) noexcept : m_impl(impl)
 {
 }
 
 ////////////////////////////////////////////////////////////
-Monitor::Monitor(Monitor&& other) noexcept : m_impl(std::move(const_cast<std::unique_ptr<priv::MonitorImpl>&&>(other.m_impl)))
+MonitorOwning::MonitorOwning(std::unique_ptr<priv::MonitorImpl>&& impl) noexcept : Monitor(impl.release())
 {
 }
 
 ////////////////////////////////////////////////////////////
-// Must be in this compilation unit, not inferred from header
-Monitor::~Monitor() = default;
+MonitorOwning::~MonitorOwning()
+{
+	delete m_impl;
+}
+
 
 ////////////////////////////////////////////////////////////
-Monitor Monitor::getPrimaryMonitor()
+MonitorOwning Monitor::getPrimaryMonitor()
 {
     // Call OS-specific implementation creator for primary monitor
     return MonitorImplType::createPrimaryMonitor();
@@ -104,12 +106,12 @@ std::vector<Monitor> Monitor::getAllMonitors()
 	auto impls = MonitorImplType::createAllMonitors();
 
 	std::vector<Monitor> monitors;
-	monitors.reserve(impls.size());
+	// monitors.reserve(impls.size());
 
-	for (auto&& monitorImpl : impls)
-	{
-		monitors.emplace_back(Monitor(std::move(monitorImpl)));
-	}
+	// for (auto&& monitorImpl : impls)
+	// {
+	// 	monitors.emplace_back(monitorImpl.get());
+	// }
 
 	return monitors;
 }
@@ -119,7 +121,7 @@ std::vector<Monitor> Monitor::getAllMonitors()
 VideoModeDesktop Monitor::getDesktopMode()
 {
     // Directly forward to the OS-specific implementation
-    return static_cast<MonitorImplType*>(m_impl.get())->getDesktopMode();
+    return static_cast<MonitorImplType*>(m_impl)->getDesktopMode();
 }
 
 
@@ -135,7 +137,7 @@ bool Monitor::isValidMode(const VideoMode& mode)
 ////////////////////////////////////////////////////////////
 std::vector<VideoMode> Monitor::getFullscreenModes()
 {
-	std::vector<VideoMode> result = static_cast<MonitorImplType*>(m_impl.get())->getFullscreenModes();
+	std::vector<VideoMode> result = static_cast<MonitorImplType*>(m_impl)->getFullscreenModes();
 	std::sort(result.begin(), result.end(), std::greater<>());
 	return result;
 }

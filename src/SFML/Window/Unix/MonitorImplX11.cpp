@@ -50,6 +50,18 @@ void XDeleter<XRRScreenConfiguration>::operator()(XRRScreenConfiguration* config
 	XRRFreeScreenConfigInfo(config);
 }
 
+////////////////////////////////////////////////////////////
+void XDeleter<XRRScreenResources>::operator()(XRRScreenResources* res) const
+{
+	XRRFreeScreenResources(res);
+}
+
+////////////////////////////////////////////////////////////
+void XDeleter<XRRCrtcInfo>::operator()(XRRCrtcInfo* info) const
+{
+	XRRFreeCrtcInfo(info);
+}
+
 
 ////////////////////////////////////////////////////////////
 std::shared_ptr<Display> MonitorImplX11::openXDisplay() {
@@ -73,7 +85,6 @@ std::shared_ptr<Display> MonitorImplX11::openXDisplay() {
 	return display;
 }
 
-
 ////////////////////////////////////////////////////////////
 X11Ptr<XRRScreenConfiguration> MonitorImplX11::getScreenConfig(const std::shared_ptr<Display>& display, int screen) {
 	auto config = X11Ptr<XRRScreenConfiguration>(
@@ -82,22 +93,45 @@ X11Ptr<XRRScreenConfiguration> MonitorImplX11::getScreenConfig(const std::shared
 
 	if (!config)
 	{
-		err() << "Failed to retrieve the screen configuration while trying to get the supported video modes"
-			<< std::endl;
+		err() << "Failed to retrieve the screen configuration" << std::endl;
 		throw Monitor::MonitorException("Failed to retrieve the screen configuration");
 	}
 
 	return config;
 }
 
+////////////////////////////////////////////////////////////
+X11Ptr<XRRScreenResources> MonitorImplX11::getScreenResources(const std::shared_ptr<Display>& display, int screen) {
+	auto resources = X11Ptr<XRRScreenResources>(
+		XRRGetScreenResources(display.get(), RootWindow(display.get(), screen))
+	);
+
+	if (!resources)
+	{
+		err() << "Failed to retrieve the screen resources" << std::endl;
+		throw Monitor::MonitorException("Failed to retrieve the screen resources");
+	}
+
+	return resources;
+}
+
+
 
 ////////////////////////////////////////////////////////////
-MonitorImplX11::MonitorImplX11(std::shared_ptr<Display> display, int screen, int monitor)
-    : m_display(std::move(display))
-    , m_screen(screen)
-    , m_config(getScreenConfig(m_display, m_screen))
+MonitorImplX11::MonitorImplX11(std::shared_ptr<Display> display, int screen, X11Ptr<XRRScreenConfiguration> screenConfig, X11Ptr<XRRScreenResources> screenResources, int monitor)
+	: m_display(std::move(display))
+	, m_screen(screen)
+	, m_screenConfig(std::move(screenConfig))
+	, m_screenResources(std::move(screenResources))
 	, m_monitor(monitor)
+	, m_crtcInfo(X11Ptr<XRRCrtcInfo>(
+		XRRGetCrtcInfo(m_display.get(), m_screenResources.get(), m_screenResources->crtcs[m_monitor])))
 {
+	if (!m_crtcInfo)
+	{
+		err() << "Failed to retrieve the screen configuration" << std::endl;
+		throw Monitor::MonitorException("Failed to retrieve the CRTC information");
+	}
 }
 
 
@@ -106,30 +140,44 @@ std::unique_ptr<MonitorImpl> MonitorImplX11::createPrimaryMonitor()
 {
 	auto display = openXDisplay();
 
-    auto screen = DefaultScreen(display.get());
+	auto screen = DefaultScreen(display.get());
+	Window rootWindow = RootWindow(display.get(), screen);
 
-    // Retrieve the default screen number
-    return std::make_unique<MonitorImplX11>(std::move(display), screen, 0);
+	RROutput primaryOutput = XRRGetOutputPrimary(display.get(), rootWindow);
+	auto screenResources = getScreenResources(display, screen);
+
+	int monitorIndex = -1;
+	if (screenResources) {
+		// Find the monitor index that corresponds to the primary output
+		for (int i = 0; i < screenResources->noutput; ++i) {
+			if (screenResources->outputs[i] == primaryOutput) {
+				monitorIndex = i;
+				break;
+			}
+		}
+	}
+
+	// Create the MonitorImplX11 object
+	return std::make_unique<MonitorImplX11>(display, screen, getScreenConfig(display, screen), std::move(screenResources), monitorIndex);
 }
 
 ////////////////////////////////////////////////////////////
-std::vector<std::unique_ptr<MonitorImpl>> MonitorImplX11::createAllMonitors()
+std::vector<MonitorImpl> MonitorImplX11::createAllMonitors()
 {
 	auto display = openXDisplay();
 
 	const auto numScreens = ScreenCount(display.get());
 
-	std::vector<std::unique_ptr<MonitorImpl>> monitors;
-	monitors.reserve(static_cast<size_t>(numScreens));
+	std::vector<MonitorImpl> monitors;
 
 	// iterate over screens
 	for (int screen = 0; screen < numScreens; ++screen)
 	{
-		auto* screenResources = XRRGetScreenResources(display.get(), RootWindow(display.get(), screen));
+		auto screenResources = getScreenResources(display, screen);
 
 		for (int monitor = 0; monitor < screenResources->ncrtc; ++monitor)
 		{
-			monitors.push_back(std::make_unique<MonitorImplX11>(display, screen, monitor));
+			// monitors.emplace_back(display, screen, getScreenConfig(display, screen), getScreenResources(display, screen), monitor);
 		}
 	}
 
@@ -141,44 +189,32 @@ std::vector<VideoMode> MonitorImplX11::getFullscreenModes()
 {
 	std::vector<VideoMode> modes;
 
-	// Get the screen resources
-	XRRScreenResources* res = XRRGetScreenResources(m_display.get(), RootWindow(m_display.get(), m_screen));
-
-	if (res) {
-		// Get the CRTC info for the specific monitor
-		XRRCrtcInfo* crtcInfo = XRRGetCrtcInfo(m_display.get(), res, res->crtcs[m_monitor]);
-
-		if (crtcInfo) {
-			// Get the list of supported depths
-			int        nbDepths = 0;
-			const auto depths   = X11Ptr<int[]>(XListDepths(m_display.get(), m_screen, &nbDepths));
-			if (depths && (nbDepths > 0))
+	if (m_crtcInfo) {
+		// Get the list of supported depths
+		int        nbDepths = 0;
+		const auto depths   = X11Ptr<int[]>(XListDepths(m_display.get(), m_screen, &nbDepths));
+		if (depths && (nbDepths > 0))
+		{
+			// Combine depths and sizes to fill the array of supported modes
+			for (std::size_t i = 0; i < static_cast<std::size_t>(nbDepths); ++i)
 			{
-				// Combine depths and sizes to fill the array of supported modes
-				for (std::size_t i = 0; i < static_cast<std::size_t>(nbDepths); ++i)
-				{
-					// Convert to VideoMode
-					VideoMode mode({
-						static_cast<unsigned int>(crtcInfo->width),
-						static_cast<unsigned int>(crtcInfo->height)
-					}, static_cast<unsigned int>(depths[i]));
+				// Convert to VideoMode
+				VideoMode mode({
+					static_cast<unsigned int>(m_crtcInfo->width),
+					static_cast<unsigned int>(m_crtcInfo->height)
+				}, static_cast<unsigned int>(depths[i]));
 
-					Rotation currentRotation = 0;
-					XRRConfigRotations(m_config.get(), &currentRotation);
+				Rotation currentRotation = 0;
+				XRRConfigRotations(m_screenConfig.get(), &currentRotation);
 
-					if (currentRotation == RR_Rotate_90 || currentRotation == RR_Rotate_270)
-						std::swap(mode.size.x, mode.size.y);
+				if (currentRotation == RR_Rotate_90 || currentRotation == RR_Rotate_270)
+					std::swap(mode.size.x, mode.size.y);
 
-					// Add it only if it is not already in the array
-					if (std::find(modes.begin(), modes.end(), mode) == modes.end())
-						modes.push_back(mode);
-				}
+				// Add it only if it is not already in the array
+				if (std::find(modes.begin(), modes.end(), mode) == modes.end())
+					modes.push_back(mode);
 			}
-
-			XRRFreeCrtcInfo(crtcInfo);
 		}
-
-		XRRFreeScreenResources(res);
 	}
 
 	return modes;
@@ -191,31 +227,19 @@ VideoModeDesktop MonitorImplX11::getDesktopMode()
 	VideoMode desktopMode;
 	sf::Vector2i position;
 
-	// Get the screen resources
-	XRRScreenResources* res = XRRGetScreenResources(m_display.get(), RootWindow(m_display.get(), m_screen));
+	if (m_crtcInfo) {
+		desktopMode = VideoMode({
+			static_cast<unsigned int>(m_crtcInfo->width),
+			static_cast<unsigned int>(m_crtcInfo->height)
+		}, static_cast<unsigned int>(DefaultDepth(m_display.get(), m_screen)));
 
-	if (res) {
-		// Get the CRTC info for the specific monitor
-		XRRCrtcInfo* crtcInfo = XRRGetCrtcInfo(m_display.get(), res, res->crtcs[m_monitor]);
+		position = sf::Vector2i(m_crtcInfo->x, m_crtcInfo->y);
 
-		if (crtcInfo) {
-			desktopMode = VideoMode({
-				static_cast<unsigned int>(crtcInfo->width),
-				static_cast<unsigned int>(crtcInfo->height)
-			}, static_cast<unsigned int>(DefaultDepth(m_display.get(), m_screen)));
+		Rotation modeRotation = 0;
+		XRRConfigRotations(m_screenConfig.get(), &modeRotation);
 
-			position = sf::Vector2i(crtcInfo->x, crtcInfo->y);
-
-			Rotation modeRotation = 0;
-			XRRConfigRotations(m_config.get(), &modeRotation);
-
-			if (modeRotation == RR_Rotate_90 || modeRotation == RR_Rotate_270)
-				std::swap(desktopMode.size.x, desktopMode.size.y);
-
-			XRRFreeCrtcInfo(crtcInfo);
-		}
-
-		XRRFreeScreenResources(res);
+		if (modeRotation == RR_Rotate_90 || modeRotation == RR_Rotate_270)
+			std::swap(desktopMode.size.x, desktopMode.size.y);
 	}
 
 	return VideoModeDesktop{ desktopMode, position };

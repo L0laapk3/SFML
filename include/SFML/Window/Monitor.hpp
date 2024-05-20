@@ -50,6 +50,7 @@ class MonitorImpl;
 /// \brief Monitor represents a monitor made available by the OS
 ///
 ////////////////////////////////////////////////////////////
+class MonitorOwning;
 class SFML_WINDOW_API Monitor
 {
 public:
@@ -64,26 +65,20 @@ public:
 
 
 private:
+	friend class MonitorOwning;
+
     ////////////////////////////////////////////////////////////
     /// \brief Construct monitor with a MonitorImpl pointer
     ///
     ////////////////////////////////////////////////////////////
-    Monitor(std::unique_ptr<priv::MonitorImpl>&& impl);
+    Monitor(priv::MonitorImpl* impl) noexcept;
 
 public:
 	////////////////////////////////////////////////////////////
-	/// \brief Move constructor
-	///
-	/// \param other Instance to move
+	/// \brief Disable copy and move assignment & constructors
 	///
 	////////////////////////////////////////////////////////////
-	Monitor(Monitor&& other) noexcept;
-
-	////////////////////////////////////////////////////////////
-	/// \brief Destructor
-	///
-	////////////////////////////////////////////////////////////
-    ~Monitor();
+	Monitor& operator=(Monitor&& other) noexcept = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the primary monitor
@@ -91,7 +86,7 @@ public:
     /// \return Primary monitor
     ///
     ////////////////////////////////////////////////////////////
-    static Monitor getPrimaryMonitor();
+    static MonitorOwning getPrimaryMonitor();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the all monitors
@@ -141,8 +136,18 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const std::unique_ptr<priv::MonitorImpl> m_impl; //!< Platform-specific implementation of the monitor
+    priv::MonitorImpl* const m_impl; //!< Platform-specific implementation of the monitor
 };
+
+
+class SFML_WINDOW_API MonitorOwning : public Monitor {
+	friend class Monitor;
+
+	MonitorOwning(std::unique_ptr<priv::MonitorImpl>&& impl) noexcept;
+public:
+	~MonitorOwning();
+};
+
 
 } // namespace sf
 

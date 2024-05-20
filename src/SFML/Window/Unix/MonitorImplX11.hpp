@@ -48,7 +48,17 @@ namespace priv
 template <>
 struct XDeleter<XRRScreenConfiguration>
 {
-    void operator()(XRRScreenConfiguration* config) const;
+    void operator()(XRRScreenConfiguration*) const;
+};
+template <>
+struct XDeleter<XRRScreenResources>
+{
+    void operator()(XRRScreenResources*) const;
+};
+template <>
+struct XDeleter<XRRCrtcInfo>
+{
+    void operator()(XRRCrtcInfo*) const;
 };
 
 
@@ -60,42 +70,22 @@ class MonitorImplX11 : public MonitorImpl
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the monitor implementation
+    /// \brief Construct the monitor implementation. Constructs the remaining members by itself.
     ///
     ////////////////////////////////////////////////////////////
-    MonitorImplX11(std::shared_ptr<Display> display, int screen, int monitor);
+    MonitorImplX11(
+		std::shared_ptr<Display> display,
+		int screen,
+		X11Ptr<XRRScreenConfiguration> screenConfig,
+		X11Ptr<XRRScreenResources> screenResources,
+		int monitor
+	);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create primary monitor implementation
-    ///
-    /// \return Pointer to the created primary monitor implementation
+    /// \brief Construct the monitor implementation. Constructs the remaining members by itself.
     ///
     ////////////////////////////////////////////////////////////
-    static std::unique_ptr<MonitorImpl> createPrimaryMonitor();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Create all monitor implementations
-    ///
-    /// \return Pointer to the created primary monitor implementation
-    ///
-    ////////////////////////////////////////////////////////////
-    static std::vector<std::unique_ptr<MonitorImpl>> createAllMonitors();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the list of all the supported fullscreen video modes of this monitor
-    ///
-    /// \return Array filled with the fullscreen video modes of this monitor
-    ///
-    ////////////////////////////////////////////////////////////
-    std::vector<VideoMode> getFullscreenModes();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the current desktop video mode of this monitor
-    ///
-    /// \return Current desktop video mode of this monitor
-    ///
-    ////////////////////////////////////////////////////////////
-    VideoModeDesktop getDesktopMode();
+    MonitorImplX11(const std::shared_ptr<Display>& display, int screen, int monitor);
 
 private:
 	////////////////////////////////////////////////////////////
@@ -117,13 +107,61 @@ private:
 	////////////////////////////////////////////////////////////
 	static X11Ptr<XRRScreenConfiguration> getScreenConfig(const std::shared_ptr<Display>& display, int screen);
 
+	////////////////////////////////////////////////////////////
+	/// \brief Get the resources of a screen
+	///
+	/// \param display Shared pointer to the display
+	/// \param screen Screen number
+	///
+	/// \return Shared pointer to the created screen resources
+	///
+	////////////////////////////////////////////////////////////
+	static X11Ptr<XRRScreenResources> getScreenResources(const std::shared_ptr<Display>& display, int screen);
+
+
+public:
+    ////////////////////////////////////////////////////////////
+    /// \brief Create primary monitor implementation
+    ///
+    /// \return Pointer to the created primary monitor implementation
+    ///
+    ////////////////////////////////////////////////////////////
+    static std::unique_ptr<MonitorImpl> createPrimaryMonitor();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create all monitor implementations
+    ///
+    /// \return Pointer to the created primary monitor implementation
+    ///
+    ////////////////////////////////////////////////////////////
+    static std::vector<MonitorImpl> createAllMonitors();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the list of all the supported fullscreen video modes of this monitor
+    ///
+    /// \return Array filled with the fullscreen video modes of this monitor
+    ///
+    ////////////////////////////////////////////////////////////
+    std::vector<VideoMode> getFullscreenModes();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current desktop video mode of this monitor
+    ///
+    /// \return Current desktop video mode of this monitor
+    ///
+    ////////////////////////////////////////////////////////////
+    VideoModeDesktop getDesktopMode();
+
+private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     const std::shared_ptr<Display> m_display;
     const int m_screen;
-	const X11Ptr<XRRScreenConfiguration> m_config;
+	const X11Ptr<XRRScreenConfiguration> m_screenConfig;
+	const X11Ptr<XRRScreenResources> m_screenResources;
 	const int m_monitor;
+	const X11Ptr<XRRCrtcInfo> m_crtcInfo;
 };
 
 } // namespace priv
