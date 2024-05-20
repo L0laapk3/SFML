@@ -189,19 +189,17 @@ VideoMode MonitorImplX11::getVideoMode(int depth) const {
 	}
 
 	// Calculate the refresh rate
-	double refreshRate = static_cast<double>(modeInfo->dotClock) / (modeInfo->hTotal * modeInfo->vTotal);
+	float refreshRate = static_cast<float>(modeInfo->dotClock) / static_cast<float>(modeInfo->hTotal * modeInfo->vTotal);
 
 	VideoMode mode = VideoMode({
 			static_cast<unsigned int>(m_crtcInfo->width),
 			static_cast<unsigned int>(m_crtcInfo->height),
-		}, static_cast<unsigned int>(refreshRate),
+		},
+		refreshRate,
 		static_cast<unsigned int>(depth)
 	);
 
-	Rotation currentRotation = 0;
-	XRRConfigRotations(m_screenConfig.get(), &currentRotation);
-
-	if (currentRotation == RR_Rotate_90 || currentRotation == RR_Rotate_270)
+	if (m_crtcInfo->rotation == RR_Rotate_90 || m_crtcInfo->rotation == RR_Rotate_270)
 		std::swap(mode.size.x, mode.size.y);
 
 	return mode;
