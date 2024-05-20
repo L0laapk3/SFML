@@ -57,7 +57,7 @@ std::shared_ptr<Display> MonitorImplX11::openXDisplay() {
     if (!display)
     {
         err() << "Failed to connect to the X server while trying to get the supported video modes" << std::endl;
-        throw std::runtime_error("Failed to connect to the X server");
+        throw X11Exception("Failed to connect to the X server");
     }
 
     // Check if the XRandR extension is present
@@ -66,7 +66,7 @@ std::shared_ptr<Display> MonitorImplX11::openXDisplay() {
     {
         // XRandr extension is not supported: we cannot get the video modes
         err() << "Failed to use the XRandR extension while trying to get the supported video modes" << std::endl;
-        throw std::runtime_error("Failed to use the XRandR extension");
+        throw X11Exception("Failed to use the XRandR extension");
     }
 
 	return display;
@@ -84,7 +84,7 @@ MonitorImplX11::MonitorImplX11(std::shared_ptr<Display> display, int screen)
     {
         err() << "Failed to retrieve the screen configuration while trying to get the supported video modes"
                 << std::endl;
-        throw std::runtime_error("Failed to retrieve the screen configuration");
+        throw X11Exception("Failed to retrieve the screen configuration");
     }
 }
 
@@ -139,8 +139,10 @@ std::vector<VideoMode> MonitorImplX11::getFullscreenModes()
                 for (int j = 0; j < nbSizes; ++j)
                 {
                     // Convert to VideoMode
-                    VideoMode mode({ static_cast<unsigned int>(sizes[j].width), static_cast<unsigned int>(sizes[j].height) },
-                                    static_cast<unsigned int>(depths[i]));
+                    VideoMode mode({
+						static_cast<unsigned int>(sizes[j].width),
+						static_cast<unsigned int>(sizes[j].height)
+					}, static_cast<unsigned int>(depths[i]));
 
                     Rotation currentRotation = 0;
                     XRRConfigRotations(m_config.get(), &currentRotation);
@@ -175,8 +177,10 @@ VideoModeDesktop MonitorImplX11::getDesktopMode()
     XRRScreenSize* sizes   = XRRConfigSizes(m_config.get(), &nbSizes);
     if (sizes && (nbSizes > 0))
     {
-        desktopMode = VideoMode({ static_cast<unsigned int>(sizes[currentMode].width), static_cast<unsigned int>(sizes[currentMode].height) },
-                                static_cast<unsigned int>(DefaultDepth(m_display.get(), m_screen)));
+        desktopMode = VideoMode({
+			static_cast<unsigned int>(sizes[currentMode].width),
+			static_cast<unsigned int>(sizes[currentMode].height)
+		}, static_cast<unsigned int>(DefaultDepth(m_display.get(), m_screen)));
 
         Rotation modeRotation = 0;
         XRRConfigRotations(m_config.get(), &modeRotation);
