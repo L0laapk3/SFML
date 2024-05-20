@@ -139,7 +139,7 @@ bool WindowBase::isOpen() const
 ////////////////////////////////////////////////////////////
 Event WindowBase::pollEvent()
 {
-    sf::Event event;
+    Event event;
     if (m_impl && (event = m_impl->popEvent(false)))
         filterEvent(event);
     return event;
@@ -149,7 +149,7 @@ Event WindowBase::pollEvent()
 ////////////////////////////////////////////////////////////
 Event WindowBase::waitEvent()
 {
-    sf::Event event;
+    Event event;
     if (m_impl && (event = m_impl->popEvent(true)))
         filterEvent(event);
     return event;

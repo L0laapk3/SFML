@@ -37,6 +37,7 @@
 #include <SFML/System/Err.hpp>
 
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <ostream>
 #include <utility>
@@ -264,24 +265,30 @@ bool Texture::create(const Vector2u& size)
 ////////////////////////////////////////////////////////////
 bool Texture::loadFromFile(const std::filesystem::path& filename, const IntRect& area)
 {
-    Image image;
-    return image.loadFromFile(filename) && loadFromImage(image, area);
+    const auto image = sf::Image::loadFromFile(filename);
+    if (!image)
+        return false;
+    return loadFromImage(*image, area);
 }
 
 
 ////////////////////////////////////////////////////////////
 bool Texture::loadFromMemory(const void* data, std::size_t size, const IntRect& area)
 {
-    Image image;
-    return image.loadFromMemory(data, size) && loadFromImage(image, area);
+    const auto image = sf::Image::loadFromMemory(data, size);
+    if (!image)
+        return false;
+    return loadFromImage(*image, area);
 }
 
 
 ////////////////////////////////////////////////////////////
 bool Texture::loadFromStream(InputStream& stream, const IntRect& area)
 {
-    Image image;
-    return image.loadFromStream(stream) && loadFromImage(image, area);
+    const auto image = sf::Image::loadFromStream(stream);
+    if (!image)
+        return false;
+    return loadFromImage(*image, area);
 }
 
 
@@ -363,8 +370,7 @@ Vector2u Texture::getSize() const
 Image Texture::copyToImage() const
 {
     // Easy case: empty texture
-    if (!m_texture)
-        return {};
+    assert(m_texture && "Texture::copyToImage Cannot copy empty texture to image");
 
     const TransientContextLock lock;
 
@@ -455,11 +461,7 @@ Image Texture::copyToImage() const
 
 #endif // SFML_OPENGL_ES
 
-    // Create the image
-    Image image;
-    image.create(m_size, pixels.data());
-
-    return image;
+    return {m_size, pixels.data()};
 }
 
 
@@ -861,10 +863,10 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
         if ((coordinateType == CoordinateType::Pixels) || texture->m_pixelsFlipped)
         {
             // clang-format off
-            GLfloat matrix[16] = {1.f, 0.f, 0.f, 0.f,
-                                  0.f, 1.f, 0.f, 0.f,
-                                  0.f, 0.f, 1.f, 0.f,
-                                  0.f, 0.f, 0.f, 1.f};
+            std::array matrix = {1.f, 0.f, 0.f, 0.f,
+                                 0.f, 1.f, 0.f, 0.f,
+                                 0.f, 0.f, 1.f, 0.f,
+                                 0.f, 0.f, 0.f, 1.f};
             // clang-format on
 
             // If non-normalized coordinates (= pixels) are requested, we need to
@@ -884,7 +886,7 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 
             // Load the matrix
             glCheck(glMatrixMode(GL_TEXTURE));
-            glCheck(glLoadMatrixf(matrix));
+            glCheck(glLoadMatrixf(matrix.data()));
         }
         else
         {
@@ -921,7 +923,7 @@ unsigned int Texture::getMaximumSize()
         GLint value = 0;
 
         // Make sure that extensions are initialized
-        sf::priv::ensureExtensionsInit();
+        priv::ensureExtensionsInit();
 
         glCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &value));
 

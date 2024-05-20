@@ -7,7 +7,7 @@ set(CATCH_CONFIG_FAST_COMPILE ON CACHE BOOL "")
 set(CATCH_CONFIG_NO_EXPERIMENTAL_STATIC_ANALYSIS_SUPPORT ON CACHE BOOL "")
 FetchContent_Declare(Catch2
     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG v3.5.4
+    GIT_TAG v3.6.0
     GIT_SHALLOW ON)
 FetchContent_MakeAvailable(Catch2)
 include(Catch)
@@ -28,6 +28,8 @@ add_library(sfml-test-main STATIC
     TestUtilities/WindowUtil.cpp
     TestUtilities/GraphicsUtil.hpp
     TestUtilities/GraphicsUtil.cpp
+    TestUtilities/AudioUtil.hpp
+    TestUtilities/AudioUtil.cpp
 )
 target_include_directories(sfml-test-main PUBLIC TestUtilities)
 target_link_libraries(sfml-test-main PUBLIC SFML::System Catch2::Catch2WithMain)
@@ -41,6 +43,11 @@ sfml_set_stdlib(sfml-test-main)
 sfml_set_option(SFML_RUN_DISPLAY_TESTS ON BOOL "TRUE to run tests that require a display, FALSE to ignore it")
 if(SFML_RUN_DISPLAY_TESTS)
     target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_DISPLAY_TESTS)
+endif()
+
+sfml_set_option(SFML_RUN_AUDIO_DEVICE_TESTS ON BOOL "TRUE to run tests that require an audio device, FALSE to ignore it")
+if(SFML_RUN_AUDIO_DEVICE_TESTS)
+    target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_AUDIO_DEVICE_TESTS)
 endif()
 
 set(SYSTEM_SRC
