@@ -63,7 +63,7 @@ public:
     /// \brief Construct the monitor implementation
     ///
     ////////////////////////////////////////////////////////////
-    MonitorImplX11(std::shared_ptr<Display> display, int screen);
+    MonitorImplX11(std::shared_ptr<Display> display, int screen, int monitor);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create primary monitor implementation
@@ -106,12 +106,24 @@ private:
 	////////////////////////////////////////////////////////////
 	static std::shared_ptr<Display> openXDisplay();
 
+	////////////////////////////////////////////////////////////
+	/// \brief Get the config of a screen
+	///
+	/// \param display Shared pointer to the display
+	/// \param screen Screen number
+	///
+	/// \return Shared pointer to the created screen configuration
+	///
+	////////////////////////////////////////////////////////////
+	static X11Ptr<XRRScreenConfiguration> getScreenConfig(const std::shared_ptr<Display>& display, int screen);
+
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     const std::shared_ptr<Display> m_display;
     const int m_screen;
 	const X11Ptr<XRRScreenConfiguration> m_config;
+	const int m_monitor;
 };
 
 } // namespace priv
