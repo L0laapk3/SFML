@@ -46,9 +46,9 @@ namespace priv
 
 ////////////////////////////////////////////////////////////
 template <>
-struct XDeleter<XRRScreenConfiguration>
+struct XDeleter<XRRCrtcInfo>
 {
-    void operator()(XRRScreenConfiguration* config) const;
+    void operator()(XRRCrtcInfo*) const;
 };
 
 
@@ -60,11 +60,56 @@ class MonitorImplX11 : public MonitorImpl
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the monitor implementation
+    /// \brief Construct the monitor implementation. Constructs the remaining members by itself.
     ///
     ////////////////////////////////////////////////////////////
-    MonitorImplX11(std::shared_ptr<Display> display, int screen, int monitor);
+    MonitorImplX11(
+		std::shared_ptr<Display> display,
+		int screen,
+		std::shared_ptr<XRRScreenConfiguration> screenConfig,
+		std::shared_ptr<XRRScreenResources> screenResources,
+		int monitor
+	);
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct the monitor implementation. Constructs the remaining members by itself.
+    ///
+    ////////////////////////////////////////////////////////////
+    MonitorImplX11(const std::shared_ptr<Display>& display, int screen, int monitor);
+
+private:
+	////////////////////////////////////////////////////////////
+	/// \brief Open a connection with the X server
+	///
+	/// \return Shared pointer to the created display
+	///
+	////////////////////////////////////////////////////////////
+	static std::shared_ptr<Display> openXDisplay();
+
+	////////////////////////////////////////////////////////////
+	/// \brief Get the config of a screen
+	///
+	/// \param display Shared pointer to the display
+	/// \param screen Screen number
+	///
+	/// \return Shared pointer to the created screen configuration
+	///
+	////////////////////////////////////////////////////////////
+	static std::shared_ptr<XRRScreenConfiguration> getScreenConfig(const std::shared_ptr<Display>& display, int screen);
+
+	////////////////////////////////////////////////////////////
+	/// \brief Get the resources of a screen
+	///
+	/// \param display Shared pointer to the display
+	/// \param screen Screen number
+	///
+	/// \return Shared pointer to the created screen resources
+	///
+	////////////////////////////////////////////////////////////
+	static std::shared_ptr<XRRScreenResources> getScreenResources(const std::shared_ptr<Display>& display, int screen);
+
+
+public:
     ////////////////////////////////////////////////////////////
     /// \brief Create primary monitor implementation
     ///
@@ -98,32 +143,15 @@ public:
     VideoModeDesktop getDesktopMode();
 
 private:
-	////////////////////////////////////////////////////////////
-	/// \brief Open a connection with the X server
-	///
-	/// \return Shared pointer to the created display
-	///
-	////////////////////////////////////////////////////////////
-	static std::shared_ptr<Display> openXDisplay();
-
-	////////////////////////////////////////////////////////////
-	/// \brief Get the config of a screen
-	///
-	/// \param display Shared pointer to the display
-	/// \param screen Screen number
-	///
-	/// \return Shared pointer to the created screen configuration
-	///
-	////////////////////////////////////////////////////////////
-	static X11Ptr<XRRScreenConfiguration> getScreenConfig(const std::shared_ptr<Display>& display, int screen);
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     const std::shared_ptr<Display> m_display;
     const int m_screen;
-	const X11Ptr<XRRScreenConfiguration> m_config;
+	const std::shared_ptr<XRRScreenConfiguration> m_screenConfig;
+	const std::shared_ptr<XRRScreenResources> m_screenResources;
 	const int m_monitor;
+	const X11Ptr<XRRCrtcInfo> m_crtcInfo;
 };
 
 } // namespace priv
