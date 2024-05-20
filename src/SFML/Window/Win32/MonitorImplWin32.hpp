@@ -29,6 +29,11 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/MonitorImpl.hpp>
 
+#include <SFML/System/Win32/WindowsHeader.hpp>
+#include <minwindef.h>
+#include <string>
+#include <optional>
+
 
 namespace sf
 {
@@ -40,17 +45,21 @@ namespace priv
 ////////////////////////////////////////////////////////////
 /// \brief Windows implementation of MonitorImpl
 ///
-/// \note Placeholder class. Actual storage of the monitor handle not implemented yet.
-///
 ////////////////////////////////////////////////////////////
 class MonitorImplWin32 : public MonitorImpl
 {
 public:
+
+	// Just windows things
+	using StringType    = std::conditional_t<std::is_same_v<DISPLAY_DEVICE, DISPLAY_DEVICEW>, std::wstring, std::string>;
+	using WinStringType = std::conditional_t<std::is_same_v<DISPLAY_DEVICE, DISPLAY_DEVICEW>, LPCWSTR     , LPCSTR>;
+
+
     ////////////////////////////////////////////////////////////
     /// \brief Construct the monitor implementation
     ///
     ////////////////////////////////////////////////////////////
-    MonitorImplWin32();
+    MonitorImplWin32(std::optional<StringType>&& deviceName);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create primary monitor implementation
@@ -83,6 +92,15 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     VideoModeDesktop getDesktopMode();
+
+private:
+
+	WinStringType getDeviceNamePtr() const;
+
+	////////////////////////////////////////////////////////////
+	// Member data
+	////////////////////////////////////////////////////////////
+	const std::optional<StringType> m_deviceName;
 };
 
 } // namespace priv
