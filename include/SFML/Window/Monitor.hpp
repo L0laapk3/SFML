@@ -33,6 +33,7 @@
 
 #include <memory>
 #include <vector>
+#include <stdexcept>
 
 
 namespace sf
@@ -51,6 +52,18 @@ class MonitorImpl;
 ////////////////////////////////////////////////////////////
 class SFML_WINDOW_API Monitor
 {
+public:
+	class MonitorException : public std::runtime_error
+	{
+	public:
+		explicit MonitorException(const std::string& what)
+			: std::runtime_error(what)
+		{
+		}
+	};
+
+
+private:
     ////////////////////////////////////////////////////////////
     /// \brief Construct monitor with a MonitorImpl pointer
     ///

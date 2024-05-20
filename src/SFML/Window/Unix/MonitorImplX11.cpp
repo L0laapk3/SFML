@@ -29,6 +29,7 @@
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/MonitorImplX11.hpp>
 #include <SFML/Window/Unix/Utils.hpp>
+#include <SFML/Window/Monitor.hpp>
 #include <SFML/Window/VideoModeDesktop.hpp>
 
 #include <SFML/System/Err.hpp>
@@ -57,7 +58,7 @@ std::shared_ptr<Display> MonitorImplX11::openXDisplay() {
     if (!display)
     {
         err() << "Failed to connect to the X server while trying to get the supported video modes" << std::endl;
-        throw X11Exception("Failed to connect to the X server");
+        throw Monitor::MonitorException("Failed to connect to the X server");
     }
 
     // Check if the XRandR extension is present
@@ -66,7 +67,7 @@ std::shared_ptr<Display> MonitorImplX11::openXDisplay() {
     {
         // XRandr extension is not supported: we cannot get the video modes
         err() << "Failed to use the XRandR extension while trying to get the supported video modes" << std::endl;
-        throw X11Exception("Failed to use the XRandR extension");
+        throw Monitor::MonitorException("Failed to use the XRandR extension");
     }
 
 	return display;
@@ -84,7 +85,7 @@ MonitorImplX11::MonitorImplX11(std::shared_ptr<Display> display, int screen)
     {
         err() << "Failed to retrieve the screen configuration while trying to get the supported video modes"
                 << std::endl;
-        throw X11Exception("Failed to retrieve the screen configuration");
+        throw Monitor::MonitorException("Failed to retrieve the screen configuration");
     }
 }
 

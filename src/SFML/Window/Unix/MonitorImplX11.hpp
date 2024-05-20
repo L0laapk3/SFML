@@ -59,17 +59,6 @@ struct XDeleter<XRRScreenConfiguration>
 class MonitorImplX11 : public MonitorImpl
 {
 public:
-
-	////////////////////////////////////////////////////////////
-	/// \brief X11 exception. A type of runtime_error
-	///
-	////////////////////////////////////////////////////////////
-	class X11Exception : public std::runtime_error
-	{
-	public:
-		explicit X11Exception(const std::string& message);
-	};
-
     ////////////////////////////////////////////////////////////
     /// \brief Construct the monitor implementation
     ///
