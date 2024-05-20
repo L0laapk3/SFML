@@ -161,6 +161,7 @@ std::vector<VideoMode> MonitorImplX11::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
+[[deprecated("Warning: the location attribute has not yet been implemented on this platform.")]]
 VideoModeDesktop MonitorImplX11::getDesktopMode()
 {
     VideoMode desktopMode;

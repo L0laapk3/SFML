@@ -62,6 +62,7 @@ std::vector<VideoMode> MonitorImplUIKit::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
+[[deprecated("Warning: the location attribute has not yet been implemented on this platform.")]]
 VideoModeDesktop MonitorImplUIKit::getDesktopMode()
 {
     const CGRect bounds       = [[UIScreen mainScreen] bounds];

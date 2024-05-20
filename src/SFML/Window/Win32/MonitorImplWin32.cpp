@@ -100,6 +100,7 @@ std::vector<VideoMode> MonitorImplWin32::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
+[[deprecated("Warning: the location attribute has not yet been implemented on this platform.")]]
 VideoModeDesktop MonitorImplWin32::getDesktopMode()
 {
     DEVMODE win32Mode;

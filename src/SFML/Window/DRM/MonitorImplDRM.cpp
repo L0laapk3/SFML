@@ -74,6 +74,7 @@ std::vector<VideoMode> MonitorImplDRM::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
+[[deprecated("Warning: the location attribute has not yet been implemented on this platform.")]]
 VideoModeDesktop MonitorImplDRM::getDesktopMode()
 {
     const Drm&         drm = DRMContext::getDRM();

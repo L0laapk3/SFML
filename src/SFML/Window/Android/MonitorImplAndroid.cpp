@@ -65,6 +65,7 @@ std::vector<VideoMode> MonitorImplAndroid::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
+[[deprecated("Warning: the location attribute has not yet been implemented on this platform.")]]
 VideoModeDesktop MonitorImplAndroid::getDesktopMode()
 {
     // Get the activity states

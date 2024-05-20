@@ -96,6 +96,7 @@ std::vector<VideoMode> MonitorImplCocoa::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
+[[deprecated("Warning: the location attribute has not yet been implemented on this platform.")]]
 VideoModeDesktop MonitorImplCocoa::getDesktopMode()
 {
     VideoMode mode; // RVO
