@@ -95,7 +95,7 @@ public:
 
 private:
 
-	WinStringType getDeviceNamePtr() const;
+	WinStringType getDeviceNameCStr() const;
 
 	////////////////////////////////////////////////////////////
 	// Member data

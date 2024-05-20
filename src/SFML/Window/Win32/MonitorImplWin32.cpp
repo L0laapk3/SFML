@@ -68,11 +68,8 @@ std::vector<std::unique_ptr<MonitorImpl>> MonitorImplWin32::createAllMonitors()
 }
 
 
-MonitorImplWin32::WinStringType MonitorImplWin32::getDeviceNamePtr() const {
-	if (!m_deviceName.has_value()) {
-		return nullptr;
-	}
-	return m_deviceName->c_str();
+MonitorImplWin32::WinStringType MonitorImplWin32::getDeviceNameCStr() const {
+	return m_deviceName ? m_deviceName->c_str() : nullptr;
 }
 
 
@@ -85,7 +82,7 @@ std::vector<VideoMode> MonitorImplWin32::getFullscreenModes()
     DEVMODE win32Mode;
     win32Mode.dmSize        = sizeof(win32Mode);
     win32Mode.dmDriverExtra = 0;
-    for (int count = 0; EnumDisplaySettings(getDeviceNamePtr(), static_cast<DWORD>(count), &win32Mode); ++count)
+    for (int count = 0; EnumDisplaySettings(getDeviceNameCStr(), static_cast<DWORD>(count), &win32Mode); ++count)
     {
         // Convert to sf::VideoMode
         const VideoMode mode({win32Mode.dmPelsWidth, win32Mode.dmPelsHeight}, win32Mode.dmBitsPerPel);
@@ -100,15 +97,17 @@ std::vector<VideoMode> MonitorImplWin32::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
-[[deprecated("Warning: the location attribute has not yet been implemented on this platform.")]]
 VideoModeDesktop MonitorImplWin32::getDesktopMode()
 {
-    DEVMODE win32Mode;
-    win32Mode.dmSize        = sizeof(win32Mode);
-    win32Mode.dmDriverExtra = 0;
-    EnumDisplaySettings(getDeviceNamePtr(), ENUM_CURRENT_SETTINGS, &win32Mode);
+	DEVMODE win32Mode;
+	win32Mode.dmSize        = sizeof(win32Mode);
+	win32Mode.dmDriverExtra = 0;
+	EnumDisplaySettings(getDeviceNameCStr(), ENUM_CURRENT_SETTINGS, &win32Mode);
 
-    return VideoModeDesktop(VideoMode({win32Mode.dmPelsWidth, win32Mode.dmPelsHeight}, win32Mode.dmBitsPerPel), sf::Vector2i());
+	return VideoModeDesktop(
+		VideoMode({win32Mode.dmPelsWidth, win32Mode.dmPelsHeight}, win32Mode.dmBitsPerPel),
+		sf::Vector2i{ win32Mode.dmPosition.x, win32Mode.dmPosition.y }
+	);
 }
 
 } // namespace sf::priv
