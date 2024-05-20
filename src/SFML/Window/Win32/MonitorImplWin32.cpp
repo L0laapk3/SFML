@@ -83,7 +83,7 @@ std::optional<VideoModeDesktop> MonitorImplWin32::getVideoMode(DWORD modeIndex) 
 	if (!EnumDisplaySettings(getDeviceNameCStr(), modeIndex, &win32Mode))
 		return std::nullopt;
 	return VideoModeDesktop(
-		VideoMode({ win32Mode.dmPelsWidth, win32Mode.dmPelsHeight }, win32Mode.dmBitsPerPel),
+		VideoMode({ win32Mode.dmPelsWidth, win32Mode.dmPelsHeight }, win32Mode.dmDisplayFrequency, win32Mode.dmBitsPerPel),
 		sf::Vector2i{ win32Mode.dmPosition.x, win32Mode.dmPosition.y }
 	);
 }
