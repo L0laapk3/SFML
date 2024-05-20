@@ -177,7 +177,8 @@ VideoMode MonitorImplX11::getVideoMode(int depth) const {
 	VideoMode mode = VideoMode({
 		static_cast<unsigned int>(m_crtcInfo->width),
 		static_cast<unsigned int>(m_crtcInfo->height)
-	}, static_cast<unsigned int>(depth));
+	}, static_cast<unsigned int>(XRRConfigCurrentRate(m_screenConfig.get())),
+	static_cast<unsigned int>(depth));
 
 
 	Rotation currentRotation = 0;
