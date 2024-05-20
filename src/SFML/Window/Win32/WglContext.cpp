@@ -29,6 +29,7 @@
 #include <SFML/Window/Monitor.hpp>
 #include <SFML/Window/Win32/WglContext.hpp>
 #include <SFML/Window/WindowImpl.hpp>
+#include <SFML/Window/VideoModeDesktop.hpp>
 
 #include <SFML/System/Err.hpp>
 #include <SFML/System/String.hpp>

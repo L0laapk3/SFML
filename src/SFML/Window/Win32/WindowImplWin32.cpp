@@ -229,7 +229,7 @@ m_cursorGrabbed(m_fullscreen)
 
     // By default, the OS limits the size of the window the the desktop size,
     // we have to resize it after creation to apply the real size
-    setSize(mode.size);
+    setSize(static_cast<Vector2u>(mode.size));
 
     // Switch to fullscreen if requested
     if (m_fullscreen)
@@ -483,8 +483,8 @@ void WindowImplWin32::switchToFullscreen(const VideoMode& mode)
 {
     DEVMODE devMode;
     devMode.dmSize       = sizeof(devMode);
-    devMode.dmPelsWidth  = mode.size.x;
-    devMode.dmPelsHeight = mode.size.y;
+    devMode.dmPelsWidth  = static_cast<unsigned int>(mode.size.x);
+    devMode.dmPelsHeight = static_cast<unsigned int>(mode.size.y);
     devMode.dmBitsPerPel = mode.bitsPerPixel;
     devMode.dmFields     = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
 
@@ -1081,7 +1081,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             }
 
             // Generate a MouseMove event
-            pushEvent(Event::MouseMoved{{x, y}});
+            pushEvent(Event::MouseMoved{sf::Vector2i{x, y}});
             break;
         }
 
