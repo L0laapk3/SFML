@@ -114,6 +114,9 @@ std::vector<std::unique_ptr<MonitorImpl>> MonitorImplX11::createAllMonitors()
 	for (int i = 0; i < numScreens; ++i)
 	{
 		monitors.push_back(std::make_unique<MonitorImplX11>(display, i));
+		auto width = DisplayWidth(display.get(), i);
+		auto height = DisplayHeight(display.get(), i);
+		std::cout << "Monitor " << i << " width: " << width << " height: " << height << std::endl;
 	}
 
 	return monitors;
