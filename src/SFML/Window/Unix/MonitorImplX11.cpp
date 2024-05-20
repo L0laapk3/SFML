@@ -129,27 +129,23 @@ MonitorImplX11::MonitorImplX11(std::shared_ptr<Display> display, int screen, std
 ////////////////////////////////////////////////////////////
 std::unique_ptr<MonitorImpl> MonitorImplX11::createPrimaryMonitor()
 {
-	auto display = openXDisplay();
+    auto display = openXDisplay();
+    auto screen = DefaultScreen(display.get());
 
-	auto screen = DefaultScreen(display.get());
-	Window rootWindow = RootWindow(display.get(), screen);
+    // Get the primary output for the screen
+    RROutput primaryOutput = XRRGetOutputPrimary(display.get(), RootWindow(display.get(), screen));
 
-	RROutput primaryOutput = XRRGetOutputPrimary(display.get(), rootWindow);
-	auto screenResources = getScreenResources(display, screen);
+    auto screenResources = getScreenResources(display, screen);
 
-	int monitorIndex = -1;
-	if (screenResources) {
-		// Find the monitor index that corresponds to the primary output
-		for (int i = 0; i < screenResources->noutput; ++i) {
-			if (screenResources->outputs[i] == primaryOutput) {
-				monitorIndex = i;
-				break;
-			}
-		}
-	}
+    int monitorIndex = 0; // If the primary output is not found, default to the first monitor
+    for (int i = 0; i < screenResources->noutput; ++i)
+        if (screenResources->outputs[i] == primaryOutput) {
+            monitorIndex = i;
+            break;
+        }
 
-	// Create the MonitorImplX11 object
-	return std::make_unique<MonitorImplX11>(std::move(display), screen, getScreenConfig(display, screen), std::move(screenResources), monitorIndex);
+    // Create the MonitorImplX11 object
+    return std::make_unique<MonitorImplX11>(std::move(display), screen, getScreenConfig(display, screen), std::move(screenResources), monitorIndex);
 }
 
 ////////////////////////////////////////////////////////////
@@ -177,6 +173,23 @@ std::vector<std::unique_ptr<MonitorImpl>> MonitorImplX11::createAllMonitors()
 }
 
 ////////////////////////////////////////////////////////////
+VideoMode MonitorImplX11::getVideoMode(int depth) const {
+	VideoMode mode = VideoMode({
+		static_cast<unsigned int>(m_crtcInfo->width),
+		static_cast<unsigned int>(m_crtcInfo->height)
+	}, static_cast<unsigned int>(depth));
+
+
+	Rotation currentRotation = 0;
+	XRRConfigRotations(m_screenConfig.get(), &currentRotation);
+
+	if (currentRotation == RR_Rotate_90 || currentRotation == RR_Rotate_270)
+		std::swap(mode.size.x, mode.size.y);
+
+	return mode;
+}
+
+////////////////////////////////////////////////////////////
 std::vector<VideoMode> MonitorImplX11::getFullscreenModes()
 {
 	std::vector<VideoMode> modes;
@@ -189,17 +202,7 @@ std::vector<VideoMode> MonitorImplX11::getFullscreenModes()
 		// Combine depths and sizes to fill the array of supported modes
 		for (std::size_t i = 0; i < static_cast<std::size_t>(nbDepths); ++i)
 		{
-			// Convert to VideoMode
-			VideoMode mode({
-				static_cast<unsigned int>(m_crtcInfo->width),
-				static_cast<unsigned int>(m_crtcInfo->height)
-			}, static_cast<unsigned int>(depths[i]));
-
-			Rotation currentRotation = 0;
-			XRRConfigRotations(m_screenConfig.get(), &currentRotation);
-
-			if (currentRotation == RR_Rotate_90 || currentRotation == RR_Rotate_270)
-				std::swap(mode.size.x, mode.size.y);
+			auto mode = getVideoMode(depths[i]);
 
 			// Add it only if it is not already in the array
 			if (std::find(modes.begin(), modes.end(), mode) == modes.end())
@@ -214,25 +217,10 @@ std::vector<VideoMode> MonitorImplX11::getFullscreenModes()
 ////////////////////////////////////////////////////////////
 VideoModeDesktop MonitorImplX11::getDesktopMode()
 {
-	VideoMode desktopMode;
-	sf::Vector2i position;
-
-	if (m_crtcInfo) {
-		desktopMode = VideoMode({
-			static_cast<unsigned int>(m_crtcInfo->width),
-			static_cast<unsigned int>(m_crtcInfo->height)
-		}, static_cast<unsigned int>(DefaultDepth(m_display.get(), m_screen)));
-
-		position = sf::Vector2i(m_crtcInfo->x, m_crtcInfo->y);
-
-		Rotation modeRotation = 0;
-		XRRConfigRotations(m_screenConfig.get(), &modeRotation);
-
-		if (modeRotation == RR_Rotate_90 || modeRotation == RR_Rotate_270)
-			std::swap(desktopMode.size.x, desktopMode.size.y);
-	}
-
-	return VideoModeDesktop{ desktopMode, position };
+	return VideoModeDesktop{
+		getVideoMode(DefaultDepth(m_display.get(), m_screen)),
+		sf::Vector2i(m_crtcInfo->x, m_crtcInfo->y)
+	};
 }
 
 } // namespace sf::priv
