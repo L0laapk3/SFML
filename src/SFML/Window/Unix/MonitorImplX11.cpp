@@ -186,10 +186,10 @@ std::vector<VideoMode> MonitorImplX11::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
-[[deprecated("Warning: the location attribute has not yet been implemented on this platform.")]]
 VideoModeDesktop MonitorImplX11::getDesktopMode()
 {
 	VideoMode desktopMode;
+	sf::Vector2i position;
 
 	// Get the screen resources
 	XRRScreenResources* res = XRRGetScreenResources(m_display.get(), RootWindow(m_display.get(), m_screen));
@@ -204,6 +204,8 @@ VideoModeDesktop MonitorImplX11::getDesktopMode()
 				static_cast<unsigned int>(crtcInfo->height)
 			}, static_cast<unsigned int>(DefaultDepth(m_display.get(), m_screen)));
 
+			position = sf::Vector2i(crtcInfo->x, crtcInfo->y);
+
 			Rotation modeRotation = 0;
 			XRRConfigRotations(m_config.get(), &modeRotation);
 
@@ -216,7 +218,7 @@ VideoModeDesktop MonitorImplX11::getDesktopMode()
 		XRRFreeScreenResources(res);
 	}
 
-	return VideoModeDesktop{ desktopMode, sf::Vector2i() };
+	return VideoModeDesktop{ desktopMode, position };
 }
 
 } // namespace sf::priv
