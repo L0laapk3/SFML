@@ -94,7 +94,14 @@ public:
     VideoModeDesktop getDesktopMode();
 
 private:
+	std::optional<VideoModeDesktop> getVideoMode(DWORD modeIndex) const;
 
+	////////////////////////////////////////////////////////////
+	/// \brief Get the device name as a C-style string
+	///
+	/// \return Device name as a C-style string
+	///
+	////////////////////////////////////////////////////////////
 	WinStringType getDeviceNameCStr() const;
 
 	////////////////////////////////////////////////////////////

@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include "SFML/Window/VideoMode.hpp"
 #include <SFML/Window/VideoModeDesktop.hpp>
 #include <SFML/Window/Win32/MonitorImplWin32.hpp>
 
@@ -68,8 +69,23 @@ std::vector<std::unique_ptr<MonitorImpl>> MonitorImplWin32::createAllMonitors()
 }
 
 
+////////////////////////////////////////////////////////////
 MonitorImplWin32::WinStringType MonitorImplWin32::getDeviceNameCStr() const {
 	return m_deviceName ? m_deviceName->c_str() : nullptr;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<VideoModeDesktop> MonitorImplWin32::getVideoMode(DWORD modeIndex) const {
+	DEVMODE win32Mode;
+	win32Mode.dmSize = sizeof(win32Mode);
+	win32Mode.dmDriverExtra = 0;
+	if (!EnumDisplaySettings(getDeviceNameCStr(), modeIndex, &win32Mode))
+		return std::nullopt;
+	return VideoModeDesktop(
+		VideoMode({ win32Mode.dmPelsWidth, win32Mode.dmPelsHeight }, win32Mode.dmBitsPerPel),
+		sf::Vector2i{ win32Mode.dmPosition.x, win32Mode.dmPosition.y }
+	);
 }
 
 
@@ -79,17 +95,11 @@ std::vector<VideoMode> MonitorImplWin32::getFullscreenModes()
     std::vector<VideoMode> modes;
 
     // Enumerate all available video modes for the primary display adapter
-    DEVMODE win32Mode;
-    win32Mode.dmSize        = sizeof(win32Mode);
-    win32Mode.dmDriverExtra = 0;
-    for (int count = 0; EnumDisplaySettings(getDeviceNameCStr(), static_cast<DWORD>(count), &win32Mode); ++count)
+    for (DWORD modeIndex = 0; auto mode = getVideoMode(modeIndex); ++modeIndex)
     {
-        // Convert to sf::VideoMode
-        const VideoMode mode({win32Mode.dmPelsWidth, win32Mode.dmPelsHeight}, win32Mode.dmBitsPerPel);
-
         // Add it only if it is not already in the array
-        if (std::find(modes.begin(), modes.end(), mode) == modes.end())
-            modes.push_back(mode);
+        if (std::find(modes.begin(), modes.end(), *mode) == modes.end())
+            modes.push_back(*mode);
     }
 
     return modes;
@@ -99,15 +109,11 @@ std::vector<VideoMode> MonitorImplWin32::getFullscreenModes()
 ////////////////////////////////////////////////////////////
 VideoModeDesktop MonitorImplWin32::getDesktopMode()
 {
-	DEVMODE win32Mode;
-	win32Mode.dmSize        = sizeof(win32Mode);
-	win32Mode.dmDriverExtra = 0;
-	EnumDisplaySettings(getDeviceNameCStr(), ENUM_CURRENT_SETTINGS, &win32Mode);
+	auto mode = getVideoMode(ENUM_CURRENT_SETTINGS);
+	if (!mode)
+		throw std::runtime_error("Failed to retrieve the desktop video mode");
 
-	return VideoModeDesktop(
-		VideoMode({win32Mode.dmPelsWidth, win32Mode.dmPelsHeight}, win32Mode.dmBitsPerPel),
-		sf::Vector2i{ win32Mode.dmPosition.x, win32Mode.dmPosition.y }
-	);
+	return *mode;
 }
 
 } // namespace sf::priv
