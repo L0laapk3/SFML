@@ -15,7 +15,7 @@
 int main()
 {
     // Create the window of the application with a stencil buffer
-    sf::RenderWindow window(sf::VideoMode({600, 600}),
+    sf::RenderWindow window(sf::VideoMode({600, 600}, 60),
                             "SFML Stencil",
                             sf::Style::Titlebar | sf::Style::Close,
                             sf::State::Windowed,

@@ -28,14 +28,14 @@ TEST_CASE("[Window] sf::VideoMode", runDisplayTests())
 
         SECTION("Width, height constructor")
         {
-            const sf::VideoMode videoMode({800, 600});
+            const sf::VideoMode videoMode({800, 600}, 60);
             CHECK(videoMode.size == sf::Vector2u(800, 600));
             CHECK(videoMode.bitsPerPixel == 32);
         }
 
         SECTION("Width, height, bit depth constructor")
         {
-            const sf::VideoMode videoMode({800, 600}, 24);
+            const sf::VideoMode videoMode({800, 600}, 60, 24);
             CHECK(videoMode.size == sf::Vector2u(800, 600));
             CHECK(videoMode.bitsPerPixel == 24);
         }
@@ -64,49 +64,49 @@ TEST_CASE("[Window] sf::VideoMode", runDisplayTests())
 
         SECTION("operator!=")
         {
-            CHECK(sf::VideoMode() != sf::VideoMode({1, 0}));
-            CHECK(sf::VideoMode() != sf::VideoMode({0, 1}));
-            CHECK(sf::VideoMode() != sf::VideoMode({0, 0}, 1));
-            CHECK(sf::VideoMode({720, 720}) != sf::VideoMode({720, 720}, 24));
-            CHECK(sf::VideoMode({1080, 1920}, 16) != sf::VideoMode({400, 600}));
+            CHECK(sf::VideoMode() != sf::VideoMode({1, 0}, 60));
+            CHECK(sf::VideoMode() != sf::VideoMode({0, 1}, 60));
+            CHECK(sf::VideoMode() != sf::VideoMode({0, 0}, 60, 1));
+            CHECK(sf::VideoMode({720, 720}, 60) != sf::VideoMode({720, 720}, 60, 24));
+            CHECK(sf::VideoMode({1080, 1920}, 60, 16) != sf::VideoMode({400, 600}, 60));
         }
 
         SECTION("operator<")
         {
-            CHECK(sf::VideoMode() < sf::VideoMode({0, 0}, 1));
-            CHECK(sf::VideoMode({800, 800}, 24) < sf::VideoMode({1080, 1920}, 48));
-            CHECK(sf::VideoMode({400, 600}, 48) < sf::VideoMode({600, 400}, 48));
-            CHECK(sf::VideoMode({400, 400}, 48) < sf::VideoMode({400, 600}, 48));
+            CHECK(sf::VideoMode() < sf::VideoMode({0, 0}, 0, 1));
+            CHECK(sf::VideoMode({800, 800}, 60, 24) < sf::VideoMode({1080, 1920}, 60, 48));
+            CHECK(sf::VideoMode({400, 600}, 60, 48) < sf::VideoMode({600, 400}, 60, 48));
+            CHECK(sf::VideoMode({400, 400}, 60, 48) < sf::VideoMode({400, 600}, 60, 48));
         }
 
         SECTION("operator>")
         {
-            CHECK(sf::VideoMode({1, 0}) > sf::VideoMode({0, 0}, 1));
-            CHECK(sf::VideoMode({800, 800}, 48) > sf::VideoMode({1080, 1920}, 24));
-            CHECK(sf::VideoMode({600, 400}, 48) > sf::VideoMode({400, 600}, 48));
-            CHECK(sf::VideoMode({400, 600}, 48) > sf::VideoMode({400, 400}, 48));
+            CHECK(sf::VideoMode({1, 0}, 60, 1) > sf::VideoMode({0, 0}, 60, 1));
+            CHECK(sf::VideoMode({800, 800}, 60, 48) > sf::VideoMode({1080, 1920}, 60, 24));
+            CHECK(sf::VideoMode({600, 400}, 60, 48) > sf::VideoMode({400, 600}, 60, 48));
+            CHECK(sf::VideoMode({400, 600}, 60, 48) > sf::VideoMode({400, 400}, 60, 48));
         }
 
         SECTION("operator<=")
         {
-            CHECK(sf::VideoMode() <= sf::VideoMode({0, 0}, 1));
-            CHECK(sf::VideoMode({800, 800}, 24) <= sf::VideoMode({1080, 1920}, 48));
-            CHECK(sf::VideoMode({400, 600}, 48) <= sf::VideoMode({600, 400}, 48));
-            CHECK(sf::VideoMode({400, 400}, 48) <= sf::VideoMode({400, 600}, 48));
+            CHECK(sf::VideoMode() <= sf::VideoMode({0, 0}, 60, 1));
+            CHECK(sf::VideoMode({800, 800}, 60, 24) <= sf::VideoMode({1080, 1920}, 60, 48));
+            CHECK(sf::VideoMode({400, 600}, 60, 48) <= sf::VideoMode({600, 400}, 60, 48));
+            CHECK(sf::VideoMode({400, 400}, 60, 48) <= sf::VideoMode({400, 600}, 60, 48));
             CHECK(sf::VideoMode() <= sf::VideoMode());
-            CHECK(sf::VideoMode({0, 0}, 0) <= sf::VideoMode({0, 0}, 0));
-            CHECK(sf::VideoMode({1080, 1920}, 64) <= sf::VideoMode({1080, 1920}, 64));
+            CHECK(sf::VideoMode({0, 0}, 0, 0) <= sf::VideoMode({0, 0}, 0, 0));
+            CHECK(sf::VideoMode({1080, 1920}, 60, 64) <= sf::VideoMode({1080, 1920}, 60, 64));
         }
 
         SECTION("operator>=")
         {
-            CHECK(sf::VideoMode({1, 0}) >= sf::VideoMode({0, 0}, 1));
-            CHECK(sf::VideoMode({800, 800}, 48) >= sf::VideoMode({1080, 1920}, 24));
-            CHECK(sf::VideoMode({600, 400}, 48) >= sf::VideoMode({400, 600}, 48));
-            CHECK(sf::VideoMode({400, 600}, 48) >= sf::VideoMode({400, 400}, 48));
+            CHECK(sf::VideoMode({1, 0}, 60) >= sf::VideoMode({0, 0}, 60, 1));
+            CHECK(sf::VideoMode({800, 800}, 60, 48) >= sf::VideoMode({1080, 1920}, 60, 24));
+            CHECK(sf::VideoMode({600, 400}, 60, 48) >= sf::VideoMode({400, 600}, 60, 48));
+            CHECK(sf::VideoMode({400, 600}, 60, 48) >= sf::VideoMode({400, 400}, 60, 48));
             CHECK(sf::VideoMode() >= sf::VideoMode());
-            CHECK(sf::VideoMode({0, 0}, 0) >= sf::VideoMode({0, 0}, 0));
-            CHECK(sf::VideoMode({1080, 1920}, 64) >= sf::VideoMode({1080, 1920}, 64));
+            CHECK(sf::VideoMode({0, 0}, 60, 0) >= sf::VideoMode({0, 0}, 60, 0));
+            CHECK(sf::VideoMode({1080, 1920}, 60, 64) >= sf::VideoMode({1080, 1920}, 60, 64));
         }
     }
 }

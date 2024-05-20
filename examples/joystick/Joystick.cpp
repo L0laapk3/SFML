@@ -90,7 +90,7 @@ void updateValues(unsigned int index)
 int main()
 {
     // Create the window of the application
-    sf::RenderWindow window(sf::VideoMode({400, 775}), "Joystick", sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode({400, 775}, 60), "Joystick", sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
     // Load the text font

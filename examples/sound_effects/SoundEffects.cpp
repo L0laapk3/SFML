@@ -1045,7 +1045,7 @@ private:
 int main()
 {
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode({windowWidth, windowHeight}),
+    sf::RenderWindow window(sf::VideoMode({windowWidth, windowHeight}, 60),
                             "SFML Sound Effects",
                             sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);

@@ -174,12 +174,29 @@ std::vector<std::unique_ptr<MonitorImpl>> MonitorImplX11::createAllMonitors()
 
 ////////////////////////////////////////////////////////////
 VideoMode MonitorImplX11::getVideoMode(int depth) const {
-	VideoMode mode = VideoMode({
-		static_cast<unsigned int>(m_crtcInfo->width),
-		static_cast<unsigned int>(m_crtcInfo->height)
-	}, static_cast<unsigned int>(XRRConfigCurrentRate(m_screenConfig.get())),
-	static_cast<unsigned int>(depth));
+	// Get the mode info for the current mode
+	XRRModeInfo* modeInfo = nullptr;
+	for (int i = 0; i < m_screenResources->nmode; ++i) {
+		if (m_screenResources->modes[i].id == m_crtcInfo->mode) {
+			modeInfo = &m_screenResources->modes[i];
+			break;
+		}
+	}
 
+	if (!modeInfo) {
+		err() << "Failed to find the mode info for the current mode" << std::endl;
+		throw Monitor::MonitorException("Failed to find the mode info for the current mode");
+	}
+
+	// Calculate the refresh rate
+	double refreshRate = static_cast<double>(modeInfo->dotClock) / (modeInfo->hTotal * modeInfo->vTotal);
+
+	VideoMode mode = VideoMode({
+			static_cast<unsigned int>(m_crtcInfo->width),
+			static_cast<unsigned int>(m_crtcInfo->height),
+		}, static_cast<unsigned int>(refreshRate),
+		static_cast<unsigned int>(depth)
+	);
 
 	Rotation currentRotation = 0;
 	XRRConfigRotations(m_screenConfig.get(), &currentRotation);

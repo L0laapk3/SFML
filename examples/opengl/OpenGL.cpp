@@ -48,7 +48,7 @@ int main()
         contextSettings.sRgbCapable = sRgb;
 
         // Create the main window
-        sf::RenderWindow window(sf::VideoMode({800, 600}),
+        sf::RenderWindow window(sf::VideoMode({800, 600}, 60),
                                 "SFML graphics with OpenGL",
                                 sf::Style::Default,
                                 sf::State::Windowed,
