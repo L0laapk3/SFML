@@ -58,7 +58,7 @@ public:
     /// \param modeBitsPerPixel Pixel depths in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    explicit VideoMode(const Vector2u& modeSize, unsigned int refreshRate, unsigned int modeBitsPerPixel = 32);
+    explicit VideoMode(const Vector2u& modeSize, unsigned int modeRefreshRate, unsigned int modeBitsPerPixel = 32);
 
     ////////////////////////////////////////////////////////////
     // Member data
