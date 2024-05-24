@@ -69,7 +69,9 @@ public:
     /// \param a22 Element (2, 2) of the matrix
     ///
     ////////////////////////////////////////////////////////////
+    constexpr Transform(float a00, float a01, float a02, float a10, float a11, float a12);
     constexpr Transform(float a00, float a01, float a02, float a10, float a11, float a12, float a20, float a21, float a22);
+    constexpr Transform(const std::array<float, 16>& matrix);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the transform as a 4x4 matrix
@@ -149,7 +151,7 @@ public:
     /// \return Reference to *this
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Transform& combine(const Transform& transform);
+    constexpr Transform combine(const Transform& transform);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a translation
@@ -168,7 +170,7 @@ public:
     /// \see rotate, scale
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Transform& translate(const Vector2f& offset);
+    constexpr Transform translate(const Vector2f& offset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a rotation
@@ -187,7 +189,7 @@ public:
     /// \see translate, scale
     ///
     ////////////////////////////////////////////////////////////
-    SFML_GRAPHICS_API Transform& rotate(Angle angle);
+    SFML_GRAPHICS_API Transform rotate(Angle angle);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a rotation
@@ -212,7 +214,7 @@ public:
     /// \see translate, scale
     ///
     ////////////////////////////////////////////////////////////
-    SFML_GRAPHICS_API Transform& rotate(Angle angle, const Vector2f& center);
+    SFML_GRAPHICS_API Transform rotate(Angle angle, const Vector2f& center);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a scaling
@@ -231,7 +233,7 @@ public:
     /// \see translate, rotate
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Transform& scale(const Vector2f& factors);
+    constexpr Transform scale(const Vector2f& factors);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a scaling
@@ -256,7 +258,7 @@ public:
     /// \see translate, rotate
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Transform& scale(const Vector2f& factors, const Vector2f& center);
+    constexpr Transform scale(const Vector2f& factors, const Vector2f& center);
 
     ////////////////////////////////////////////////////////////
     // Static member data
