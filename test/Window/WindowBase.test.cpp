@@ -17,8 +17,8 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
     {
         STATIC_CHECK(!std::is_copy_constructible_v<sf::WindowBase>);
         STATIC_CHECK(!std::is_copy_assignable_v<sf::WindowBase>);
-        STATIC_CHECK(!std::is_nothrow_move_constructible_v<sf::WindowBase>);
-        STATIC_CHECK(!std::is_nothrow_move_assignable_v<sf::WindowBase>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::WindowBase>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::WindowBase>);
     }
 
     SECTION("Construction")
