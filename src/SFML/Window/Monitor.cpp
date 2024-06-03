@@ -114,9 +114,17 @@ std::vector<Monitor> Monitor::getAllMonitors()
 	return monitors;
 }
 
+////////////////////////////////////////////////////////////
+bool Monitor::isPrimary() const
+{
+	// // Directly forward to the OS-specific implementation
+	// return static_cast<MonitorImplType*>(m_impl.get())->isPrimary();
+	return getDesktopMode().position == Monitor::getPrimaryMonitor().getDesktopMode().position;
+}
+
 
 ////////////////////////////////////////////////////////////
-VideoModeDesktop Monitor::getDesktopMode()
+VideoModeDesktop Monitor::getDesktopMode() const
 {
     // Directly forward to the OS-specific implementation
     return static_cast<MonitorImplType*>(m_impl.get())->getDesktopMode();
@@ -124,7 +132,7 @@ VideoModeDesktop Monitor::getDesktopMode()
 
 
 ////////////////////////////////////////////////////////////
-bool Monitor::isValidMode(const VideoMode& mode)
+bool Monitor::isValidMode(const VideoMode& mode) const
 {
     const std::vector<VideoMode>& modes = getFullscreenModes();
 
@@ -133,7 +141,7 @@ bool Monitor::isValidMode(const VideoMode& mode)
 
 
 ////////////////////////////////////////////////////////////
-std::vector<VideoMode> Monitor::getFullscreenModes()
+std::vector<VideoMode> Monitor::getFullscreenModes() const
 {
 	std::vector<VideoMode> result = static_cast<MonitorImplType*>(m_impl.get())->getFullscreenModes();
 	std::sort(result.begin(), result.end(), std::greater<>());

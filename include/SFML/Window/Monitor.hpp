@@ -101,6 +101,14 @@ public:
     ////////////////////////////////////////////////////////////
     static std::vector<Monitor> getAllMonitors();
 
+	////////////////////////////////////////////////////////////
+	/// \brief Test whether a monitor is the primary monitor
+	///
+	/// \return True if the monitor is the primary monitor, false otherwise
+	///
+	////////////////////////////////////////////////////////////
+	bool isPrimary() const;
+
     ////////////////////////////////////////////////////////////
     /// \brief Retrieve all the fullscreen video modes this monitor supports
     ///
@@ -115,7 +123,7 @@ public:
     /// \return Array containing all  the fullscreen video modes this monitor supports
     ///
     ////////////////////////////////////////////////////////////
-    std::vector<VideoMode> getFullscreenModes();
+    std::vector<VideoMode> getFullscreenModes() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current desktop video mode of this monitor
@@ -123,7 +131,7 @@ public:
     /// \return Current desktop video mode of this monitor
     ///
     ////////////////////////////////////////////////////////////
-    VideoModeDesktop getDesktopMode();
+    VideoModeDesktop getDesktopMode() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the video mode is valid on this monitor
@@ -135,7 +143,7 @@ public:
     /// \return True if the video mode is valid for fullscreen mode on this monitor
     ///
     ////////////////////////////////////////////////////////////
-    bool isValidMode(const VideoMode& mode);
+    bool isValidMode(const VideoMode& mode) const;
 
 private:
     ////////////////////////////////////////////////////////////
