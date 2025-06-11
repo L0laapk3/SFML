@@ -98,20 +98,17 @@ Monitor Monitor::getPrimaryMonitor()
 }
 
 ////////////////////////////////////////////////////////////
-std::vector<Monitor> Monitor::getAllMonitors()
+void Monitor::getAllMonitors(std::vector<Monitor>& monitors)
 {
 	// Call OS-specific implementation creator for all monitors
 	auto impls = MonitorImplType::createAllMonitors();
 
-	std::vector<Monitor> monitors;
 	monitors.reserve(impls.size());
 
 	for (auto&& monitorImpl : impls)
 	{
 		monitors.emplace_back(Monitor(std::move(monitorImpl)));
 	}
-
-	return monitors;
 }
 
 ////////////////////////////////////////////////////////////

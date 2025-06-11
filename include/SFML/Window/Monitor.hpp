@@ -99,7 +99,7 @@ public:
     /// \return Vector of monitors
     ///
     ////////////////////////////////////////////////////////////
-    static std::vector<Monitor> getAllMonitors();
+    static void getAllMonitors(std::vector<Monitor>&);
 
 	////////////////////////////////////////////////////////////
 	/// \brief Test whether a monitor is the primary monitor
